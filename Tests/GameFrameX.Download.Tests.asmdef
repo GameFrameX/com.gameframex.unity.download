@@ -1,0 +1,18 @@
+{
+    "name": "GameFrameX.Download.Tests",
+    "references": [
+        "GameFrameX.Download.Runtime"
+    ],
+    "rootNamespace": "GameFrameX.Download.Tests",
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
