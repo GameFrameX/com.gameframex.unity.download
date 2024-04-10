@@ -7,6 +7,7 @@
 
 using System.Collections.Generic;
 using GameFrameX.Runtime;
+using GameFrameX.Event.Runtime;
 using UnityEngine;
 
 namespace GameFrameX.Download.Runtime

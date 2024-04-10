@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
-using GameFrameX.Event;
+using GameFrameX.Event.Runtime;
 
 namespace GameFrameX.Download.Runtime
 {
