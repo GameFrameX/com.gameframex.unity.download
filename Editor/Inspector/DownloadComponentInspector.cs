@@ -16,7 +16,7 @@ using UnityEngine;
 namespace GameFrameX.Download.Editor
 {
     [CustomEditor(typeof(DownloadComponent))]
-    internal sealed class DownloadComponentInspector : GameFrameworkInspector
+    internal sealed class DownloadComponentInspector : ComponentTypeComponentInspector
     {
         private SerializedProperty m_InstanceRoot = null;
         private SerializedProperty m_DownloadAgentHelperCount = null;
@@ -130,16 +130,17 @@ namespace GameFrameX.Download.Editor
             RefreshTypeNames();
         }
 
-        private void OnEnable()
+        protected override void Enable()
         {
+            base.Enable();
             m_InstanceRoot = serializedObject.FindProperty("m_InstanceRoot");
             m_DownloadAgentHelperCount = serializedObject.FindProperty("m_DownloadAgentHelperCount");
             m_Timeout = serializedObject.FindProperty("m_Timeout");
             m_FlushSize = serializedObject.FindProperty("m_FlushSize");
 
             m_DownloadAgentHelperInfo.Init(serializedObject);
-
-            RefreshTypeNames();
+            m_DownloadAgentHelperInfo.Refresh();
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawDownloadInfo(TaskInfo downloadInfo)
@@ -147,10 +148,9 @@ namespace GameFrameX.Download.Editor
             EditorGUILayout.LabelField(downloadInfo.Description, Utility.Text.Format("[SerialId]{0} [Tag]{1} [Priority]{2} [Status]{3}", downloadInfo.SerialId, downloadInfo.Tag ?? "<None>", downloadInfo.Priority, downloadInfo.Status));
         }
 
-        private void RefreshTypeNames()
+        protected override void RefreshTypeNames()
         {
-            m_DownloadAgentHelperInfo.Refresh();
-            serializedObject.ApplyModifiedProperties();
+           RefreshComponentTypeNames(typeof(IDownloadManager));
         }
     }
 }

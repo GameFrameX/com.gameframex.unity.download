@@ -5,6 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using GameFrameX.Runtime;
 using GameFrameX.Event.Runtime;
@@ -109,8 +110,9 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         protected override void Awake()
         {
+            ImplementationComponentType = Type.GetType(componentType);
+            InterfaceComponentType = typeof(IDownloadManager);
             base.Awake();
-            new DownloadManager();
             m_DownloadManager = GameFrameworkEntry.GetModule<IDownloadManager>();
             if (m_DownloadManager == null)
             {
