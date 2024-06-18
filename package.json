@@ -1,5 +1,5 @@
 {
-  "name": "com.alianblank.gameframex.unity.download",
+  "name": "com.gameframex.unity.download",
   "displayName": "Game Frame X Download",
   "category": "Game Framework X",
   "description": "Game Frame X Download Component",
@@ -9,8 +9,8 @@
     "Game Framework X"
   ],
   "repository": {
-    "name": "com.alianblank.gameframex.unity.download",
-    "url": "https://github.com/AlianBlank/com.alianblank.gameframex.unity.download.git",
+    "name": "com.gameframex.unity.download",
+    "url": "https://github.com/AlianBlank/com.gameframex.unity.download.git",
     "type": "git"
   },
   "author": {
