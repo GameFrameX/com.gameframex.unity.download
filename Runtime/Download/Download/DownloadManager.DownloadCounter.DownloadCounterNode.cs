@@ -5,6 +5,8 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
+using GameFrameX.Runtime;
+
 namespace GameFrameX.Download.Runtime
 {
     public sealed partial class DownloadManager : GameFrameworkModule, IDownloadManager

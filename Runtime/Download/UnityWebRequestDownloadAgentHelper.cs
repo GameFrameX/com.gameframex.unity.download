@@ -32,14 +32,8 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         public override event EventHandler<DownloadAgentHelperUpdateBytesEventArgs> DownloadAgentHelperUpdateBytes
         {
-            add
-            {
-                m_DownloadAgentHelperUpdateBytesEventHandler += value;
-            }
-            remove
-            {
-                m_DownloadAgentHelperUpdateBytesEventHandler -= value;
-            }
+            add { m_DownloadAgentHelperUpdateBytesEventHandler += value; }
+            remove { m_DownloadAgentHelperUpdateBytesEventHandler -= value; }
         }
 
         /// <summary>
@@ -47,14 +41,8 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         public override event EventHandler<DownloadAgentHelperUpdateLengthEventArgs> DownloadAgentHelperUpdateLength
         {
-            add
-            {
-                m_DownloadAgentHelperUpdateLengthEventHandler += value;
-            }
-            remove
-            {
-                m_DownloadAgentHelperUpdateLengthEventHandler -= value;
-            }
+            add { m_DownloadAgentHelperUpdateLengthEventHandler += value; }
+            remove { m_DownloadAgentHelperUpdateLengthEventHandler -= value; }
         }
 
         /// <summary>
@@ -62,14 +50,8 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         public override event EventHandler<DownloadAgentHelperCompleteEventArgs> DownloadAgentHelperComplete
         {
-            add
-            {
-                m_DownloadAgentHelperCompleteEventHandler += value;
-            }
-            remove
-            {
-                m_DownloadAgentHelperCompleteEventHandler -= value;
-            }
+            add { m_DownloadAgentHelperCompleteEventHandler += value; }
+            remove { m_DownloadAgentHelperCompleteEventHandler -= value; }
         }
 
         /// <summary>
@@ -77,14 +59,8 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         public override event EventHandler<DownloadAgentHelperErrorEventArgs> DownloadAgentHelperError
         {
-            add
-            {
-                m_DownloadAgentHelperErrorEventHandler += value;
-            }
-            remove
-            {
-                m_DownloadAgentHelperErrorEventHandler -= value;
-            }
+            add { m_DownloadAgentHelperErrorEventHandler += value; }
+            remove { m_DownloadAgentHelperErrorEventHandler -= value; }
         }
 
         /// <summary>
@@ -124,7 +100,7 @@ namespace GameFrameX.Download.Runtime
             }
 
             m_UnityWebRequest = new UnityWebRequest(downloadUri);
-            m_UnityWebRequest.SetRequestHeader("Range", Utility.Text.Format("bytes={0}-", fromPosition));
+            m_UnityWebRequest.SetRequestHeader("Range", GameFrameX.Runtime.Utility.Text.Format("bytes={0}-", fromPosition));
             m_UnityWebRequest.downloadHandler = new DownloadHandler(this);
 #if UNITY_2017_2_OR_NEWER
             m_UnityWebRequest.SendWebRequest();
@@ -149,7 +125,7 @@ namespace GameFrameX.Download.Runtime
             }
 
             m_UnityWebRequest = new UnityWebRequest(downloadUri);
-            m_UnityWebRequest.SetRequestHeader("Range", Utility.Text.Format("bytes={0}-{1}", fromPosition, toPosition));
+            m_UnityWebRequest.SetRequestHeader("Range", GameFrameX.Runtime.Utility.Text.Format("bytes={0}-{1}", fromPosition, toPosition));
             m_UnityWebRequest.downloadHandler = new DownloadHandler(this);
 #if UNITY_2017_2_OR_NEWER
             m_UnityWebRequest.SendWebRequest();

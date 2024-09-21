@@ -10,6 +10,7 @@ using System.IO;
 using System.Text;
 using GameFrameX.Download.Runtime;
 using GameFrameX.Editor;
+using GameFrameX.Runtime;
 using UnityEditor;
 using UnityEngine;
 

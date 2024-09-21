@@ -7,6 +7,7 @@
 
 
 using GameFrameX.Event.Runtime;
+using GameFrameX.Runtime;
 
 namespace GameFrameX.Download.Runtime
 {
