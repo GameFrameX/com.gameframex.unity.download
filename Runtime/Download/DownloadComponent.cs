@@ -110,7 +110,7 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         protected override void Awake()
         {
-            ImplementationComponentType = Type.GetType(componentType);
+            ImplementationComponentType = Utility.Assembly.GetType(componentType);
             InterfaceComponentType = typeof(IDownloadManager);
             base.Awake();
             m_DownloadManager = GameFrameworkEntry.GetModule<IDownloadManager>();
