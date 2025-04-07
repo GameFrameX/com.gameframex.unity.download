@@ -11,6 +11,15 @@ using UnityEngine.Networking;
 
 namespace GameFrameX.Download.Runtime
 {
+    public sealed class DownloadCertificateHandler : CertificateHandler
+    {
+        protected override bool ValidateCertificate(byte[] certificateData)
+        {
+            // return base.ValidateCertificate(certificateData);
+            return true;
+        }
+    }
+
     /// <summary>
     /// 使用 UnityWebRequest 实现的下载代理辅助器。
     /// </summary>
@@ -77,6 +86,7 @@ namespace GameFrameX.Download.Runtime
             }
 
             m_UnityWebRequest = new UnityWebRequest(downloadUri);
+            m_UnityWebRequest.certificateHandler = new DownloadCertificateHandler();
             m_UnityWebRequest.downloadHandler = new DownloadHandler(this);
 #if UNITY_2017_2_OR_NEWER
             m_UnityWebRequest.SendWebRequest();
@@ -100,6 +110,7 @@ namespace GameFrameX.Download.Runtime
             }
 
             m_UnityWebRequest = new UnityWebRequest(downloadUri);
+            m_UnityWebRequest.certificateHandler = new DownloadCertificateHandler();
             m_UnityWebRequest.SetRequestHeader("Range", GameFrameX.Runtime.Utility.Text.Format("bytes={0}-", fromPosition));
             m_UnityWebRequest.downloadHandler = new DownloadHandler(this);
 #if UNITY_2017_2_OR_NEWER
@@ -125,6 +136,7 @@ namespace GameFrameX.Download.Runtime
             }
 
             m_UnityWebRequest = new UnityWebRequest(downloadUri);
+            m_UnityWebRequest.certificateHandler = new DownloadCertificateHandler();
             m_UnityWebRequest.SetRequestHeader("Range", GameFrameX.Runtime.Utility.Text.Format("bytes={0}-{1}", fromPosition, toPosition));
             m_UnityWebRequest.downloadHandler = new DownloadHandler(this);
 #if UNITY_2017_2_OR_NEWER
