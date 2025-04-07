@@ -6,7 +6,9 @@
 //------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GameFrameX.Runtime;
 using GameFrameX.Event.Runtime;
 using UnityEngine;
@@ -103,6 +105,35 @@ namespace GameFrameX.Download.Runtime
         public float CurrentSpeed
         {
             get { return m_DownloadManager.CurrentSpeed; }
+        }
+
+        /// <summary>
+        /// 获取下载任务的字典。
+        /// </summary>
+        private ConcurrentDictionary<int, DownloadData> m_Downloads = new ConcurrentDictionary<int, DownloadData>();
+
+        /// <summary>
+        /// 下载数据。
+        /// </summary>
+        sealed class DownloadData
+        {
+            public TaskCompletionSource<bool> TCS { get; private set; }
+            public object UserData { get; private set; }
+            public string Tag { get; private set; }
+            public int SerialId { get; private set; }
+            public string Url { get; private set; }
+
+            /// <summary>
+            /// 初始化下载数据的新实例。
+            /// </summary>
+            public DownloadData(string url, string tag, int serialId, object userData)
+            {
+                Url = url;
+                Tag = tag;
+                SerialId = serialId;
+                UserData = userData;
+                TCS = new TaskCompletionSource<bool>();
+            }
         }
 
         /// <summary>
@@ -236,6 +267,23 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 增加下载任务。
         /// </summary>
+        /// <param name="downloadPath">存储路径</param>
+        /// <param name="downloadUri">下载地址</param>
+        /// <returns>返回是否下载成功</returns>
+        public Task<bool> Download(string downloadPath, string downloadUri)
+        {
+            var serialId = AddDownload(downloadPath, downloadUri, null, DefaultPriority, null);
+            if (m_Downloads.TryGetValue(serialId, out var value))
+            {
+                return value.TCS.Task;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// 增加下载任务。
+        /// </summary>
         /// <param name="downloadPath">下载后存放路径。</param>
         /// <param name="downloadUri">原始下载地址。</param>
         /// <param name="userData">用户自定义数据。</param>
@@ -295,7 +343,10 @@ namespace GameFrameX.Download.Runtime
         /// <returns>新增下载任务的序列编号。</returns>
         public int AddDownload(string downloadPath, string downloadUri, string tag, int priority, object userData)
         {
-            return m_DownloadManager.AddDownload(downloadPath, downloadUri, tag, priority, userData);
+            var serialId = m_DownloadManager.AddDownload(downloadPath, downloadUri, tag, priority, userData);
+            DownloadData downloadData = new DownloadData(downloadUri, tag, serialId, userData);
+            m_Downloads.TryAdd(serialId, downloadData);
+            return serialId;
         }
 
         /// <summary>
@@ -305,6 +356,7 @@ namespace GameFrameX.Download.Runtime
         /// <returns>是否移除下载任务成功。</returns>
         public bool RemoveDownload(int serialId)
         {
+            m_Downloads.TryRemove(serialId, out _);
             return m_DownloadManager.RemoveDownload(serialId);
         }
 
@@ -315,6 +367,17 @@ namespace GameFrameX.Download.Runtime
         /// <returns>移除下载任务的数量。</returns>
         public int RemoveDownloads(string tag)
         {
+            int serialId = -1;
+            foreach (var downloadData in m_Downloads.Values)
+            {
+                if (downloadData.Tag == tag)
+                {
+                    serialId = downloadData.SerialId;
+                    break;
+                }
+            }
+
+            m_Downloads.TryRemove(serialId, out _);
             return m_DownloadManager.RemoveDownloads(tag);
         }
 
@@ -324,6 +387,7 @@ namespace GameFrameX.Download.Runtime
         /// <returns>移除下载任务的数量。</returns>
         public int RemoveAllDownloads()
         {
+            m_Downloads.Clear();
             return m_DownloadManager.RemoveAllDownloads();
         }
 
@@ -361,12 +425,20 @@ namespace GameFrameX.Download.Runtime
         private void OnDownloadSuccess(object sender, DownloadSuccessEventArgs e)
         {
             m_EventComponent.Fire(this, DownloadSuccessEventArgs.Create(e.SerialId, e.DownloadPath, e.DownloadUri, e.CurrentLength, e.UserData));
+            if (m_Downloads.TryRemove(e.SerialId, out var value))
+            {
+                value.TCS.TrySetResult(true);
+            }
         }
 
         private void OnDownloadFailure(object sender, DownloadFailureEventArgs e)
         {
             Log.Warning("Download failure, download serial id '{0}', download path '{1}', download uri '{2}', error message '{3}'.", e.SerialId, e.DownloadPath, e.DownloadUri, e.ErrorMessage);
             m_EventComponent.Fire(this, DownloadFailureEventArgs.Create(e.SerialId, e.DownloadPath, e.DownloadUri, e.ErrorMessage, e.UserData));
+            if (m_Downloads.TryRemove(e.SerialId, out var value))
+            {
+                value.TCS.TrySetResult(false);
+            }
         }
     }
 }
