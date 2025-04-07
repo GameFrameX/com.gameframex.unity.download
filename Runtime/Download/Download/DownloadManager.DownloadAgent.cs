@@ -131,8 +131,7 @@ namespace GameFrameX.Download.Runtime
                     m_WaitTime += realElapseSeconds;
                     if (m_WaitTime >= m_Task.Timeout)
                     {
-                        DownloadAgentHelperErrorEventArgs downloadAgentHelperErrorEventArgs =
-                            DownloadAgentHelperErrorEventArgs.Create(false, "Timeout");
+                        DownloadAgentHelperErrorEventArgs downloadAgentHelperErrorEventArgs = DownloadAgentHelperErrorEventArgs.Create(false, "Timeout");
                         OnDownloadAgentHelperError(this, downloadAgentHelperErrorEventArgs);
                         ReferencePool.Release(downloadAgentHelperErrorEventArgs);
                     }
@@ -208,8 +207,7 @@ namespace GameFrameX.Download.Runtime
                 }
                 catch (Exception exception)
                 {
-                    DownloadAgentHelperErrorEventArgs downloadAgentHelperErrorEventArgs =
-                        DownloadAgentHelperErrorEventArgs.Create(false, exception.ToString());
+                    DownloadAgentHelperErrorEventArgs downloadAgentHelperErrorEventArgs = DownloadAgentHelperErrorEventArgs.Create(false, exception.ToString());
                     OnDownloadAgentHelperError(this, downloadAgentHelperErrorEventArgs);
                     ReferencePool.Release(downloadAgentHelperErrorEventArgs);
                     return StartTaskStatus.UnknownError;
@@ -286,8 +284,7 @@ namespace GameFrameX.Download.Runtime
                 }
                 catch (Exception exception)
                 {
-                    DownloadAgentHelperErrorEventArgs downloadAgentHelperErrorEventArgs =
-                        DownloadAgentHelperErrorEventArgs.Create(false, exception.ToString());
+                    DownloadAgentHelperErrorEventArgs downloadAgentHelperErrorEventArgs = DownloadAgentHelperErrorEventArgs.Create(false, exception.ToString());
                     OnDownloadAgentHelperError(this, downloadAgentHelperErrorEventArgs);
                     ReferencePool.Release(downloadAgentHelperErrorEventArgs);
                 }
