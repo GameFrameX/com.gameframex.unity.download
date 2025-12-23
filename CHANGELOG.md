@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/gameframex/com.gameframex.unity.download/compare/1.0.4...1.1.0) (2025-12-23)
+
+
+### Features
+
+* **ci:** change ci ([05acfc2](https://github.com/gameframex/com.gameframex.unity.download/commit/05acfc2bc6e3dc1a05e83f18c23dd36ef61f2b74))
+
 # Changelog
 
 ## [1.0.4](https://github.com/GameFrameX/com.gameframex.unity.download/tree/1.0.4) (2025-06-01)
