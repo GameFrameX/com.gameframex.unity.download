@@ -3,7 +3,7 @@
   "displayName": "Game Frame X Download",
   "category": "GameFrameX",
   "description": "GameFrameX Download — Unity multi-agent download manager package. Handles concurrent file downloads with priority queuing, configurable agent pools, pause/resume support, real-time speed reporting, timeout settings, and event-driven callbacks for start/update/success/failure. Docs: https://gameframex.doc.alianblank.com\n\nGameFrameX Download — Unity 多代理下载管理功能包。处理并发文件下载，支持优先级队列、可配置代理池、暂停/恢复、实时速度上报、超时设置，以及开始/更新/成功/失败的事件驱动回调。文档：https://gameframex.doc.alianblank.com",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "unity": "2019.4",
   "keywords": [
     "GameFrameX",
