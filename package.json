@@ -19,6 +19,9 @@
     "email": "alianblank@outlook.com",
     "url": "https://gameframex.doc.alianblank.com"
   },
+  "documentationUrl": "https://gameframex.doc.alianblank.com",
+  "changelogUrl": "https://github.com/gameframex/com.gameframex.unity.download/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/gameframex/com.gameframex.unity.download/blob/main/LICENSE.md",
   "dependencies": {
     "com.gameframex.unity.event": "1.1.0"
   },
