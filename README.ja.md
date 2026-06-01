@@ -18,24 +18,34 @@
 
 ---
 
-## プロジェクト概要
+## 概要
 
-**Download ダウンロードタスクコンポーネント (Download Component)** - ダウンロードキューの管理、ダウンロードタスクの処理、ダウンロード状況のリアルタイム更新を提供するインターフェース。
+Unity 向けマルチエージェントダウンロードマネージャー。並行ファイルダウンロード、優先度キュー、設定可能なエージェントプール、一時停止/再開、リアルタイム速度報告、イベント駆動コールバックを提供します。
 
-## クイックスタート
+## 機能
 
-### インストール方法（いずれかを選択）
+- **マルチエージェント並行処理** — 設定可能なエージェントプール（デフォルト 3 エージェント）による並行ダウンロード
+- **優先度スケジューリング** — 高優先度タスクを優先的にディスパッチ
+- **タググループ化** — タグによるタスクの追加・照会・削除
+- **一時停止・再開** — `Paused` で全ダウンロードをグローバルに一時停止/再開
+- **タイムアウト・フラッシュ** — コンポーネントレベルのタイムアウト設定とディスク書き込み閾値（`FlushSize`）、ブレークポイント再開をサポート
+- **リアルタイムメトリクス** — `CurrentSpeed`、エージェント数、待機タスク数
+- **イベント駆動** — Event Component 経由で `DownloadStart` / `DownloadUpdate` / `DownloadSuccess` / `DownloadFailure` を発火
+- **非同期対応** — `Download()` が `Task<bool>` を返し、await 可能
+- **プラグイン可能バックエンド** — 組み込み `UnityWebRequestDownloadAgentHelper`；Inspector で切り替え、または `IDownloadAgentHelper` を実装可能
 
-1. Unity プロジェクトの `Packages/manifest.json` を編集し、`scopedRegistries` セクションを追加してください：
+## インストール
+
+以下のいずれかの方法を選択してください：
+
+1. **Scoped Registry（推奨）** — `Packages/manifest.json` を編集：
    ```json
    {
      "scopedRegistries": [
        {
          "name": "GameFrameX",
          "url": "https://gameframex.upm.alianblank.uk",
-         "scopes": [
-           "com.gameframex"
-         ]
+         "scopes": ["com.gameframex"]
        }
      ],
      "dependencies": {
@@ -45,104 +55,122 @@
    ```
 
    `scopes` は、どのパッケージをこのレジストリから解決するかを制御します。`com.gameframex` で始まるパッケージのみがこのレジストリから取得されます。
-2. Unity の `Packages Manager` で `Git URL` を使用して追加：`https://github.com/AlianBlank/com.gameframex.unity.download.git`
-3. リポジトリを直接ダウンロードして Unity プロジェクトの `Packages` ディレクトリに配置すると、自動的に読み込まれます。
+2. **Git URL** — Unity Package Manager で `https://github.com/AlianBlank/com.gameframex.unity.download.git` を追加
+3. **ローカルクローン** — プロジェクトの `Packages/` ディレクトリにクローン
 
-## 使用例
+## クイックスタート
 
-`DownloadComponent` はダウンロードタスクを処理するためのゲームフレームワークコンポーネントです。ダウンロードキューの管理、ダウンロードタスクの処理、リアルタイムのステータス更新を行います。
-
-### 機能概要
-
-- 複数のダウンロードタスクを管理
-- レジューム機能（中断からの再開）をサポート
-- ダウンロードタスクの優先度設定
-- リアルタイムのダウンロード進捗と速度の更新
-- イベントによるダウンロードの各段階の状態通知
-
-### コアプロパティ
-
-- `Paused`：ダウンロードが一時停止されているかどうかを取得または設定します。
-- `TotalAgentCount`：ダウンロードエージェントの総数を取得します。
-- `FreeAgentCount`：利用可能なダウンロードエージェントの数を取得します。
-- `WorkingAgentCount`：動作中のダウンロードエージェントの数を取得します。
-- `WaitingTaskCount`：待機中のダウンロードタスクの数を取得します。
-- `Timeout`：ダウンロードタイムアウト時間を取得または設定します。
-- `FlushSize`：ディスク書き込みのしきい値サイズを取得または設定します。
-- `CurrentSpeed`：現在のダウンロード速度を取得します。
-
-### ダウンロードタスクの追加
+### イベント駆動の使用方法
 
 ```csharp
-// 指定されたダウンロードパスとURIでダウンロードタスクを追加
-public int AddDownload(string downloadPath, string downloadUri);
+// DownloadComponent を取得（GameEntry にアタッチ済み）
+var downloadComponent = GameEntry.GetComponent<DownloadComponent>();
 
-// 指定されたダウンロードパス、URI、タグでダウンロードタスクを追加
-public int AddDownload(string downloadPath, string downloadUri, string tag);
-
-// 指定されたダウンロードパス、URI、優先度でダウンロードタスクを追加
-public int AddDownload(string downloadPath, string downloadUri, int priority);
-
-// 指定されたダウンロードパス、URI、ユーザーデータでダウンロードタスクを追加
-public int AddDownload(string downloadPath, string downloadUri, object userData);
-```
-
-### ダウンロードタスクの削除
-
-```csharp
-// シリアルIDでダウンロードタスクを削除
-public bool RemoveDownload(int serialId);
-
-// タグでダウンロードタスクを削除
-public int RemoveDownloads(string tag);
-
-// すべてのダウンロードタスクを削除
-public int RemoveAllDownloads();
-```
-
-### イベント通知
-
-`DownloadComponent` は、ダウンロードタスクの開始、更新、成功、失敗時に通知を受け取るためのイベントを提供します。
-
-- `DownloadStart`：ダウンロード開始時にトリガーされます。
-- `DownloadUpdate`：ダウンロード更新時にトリガーされます。
-- `DownloadSuccess`：ダウンロード成功時にトリガーされます。
-- `DownloadFailure`：ダウンロード失敗時にトリガーされます。
-
-### 例
-
-```csharp
-// downloadComponent インスタンスが存在すると仮定
-int serialId = downloadComponent.AddDownload("ローカル/保存/パス", "https://example.com/file.zip");
-
-// イベントコンポーネントを通じてダウンロード成功イベントをサブスクライブ
+// EventComponent 経由でイベントをサブスクライブ
+var eventComponent = GameEntry.GetComponent<EventComponent>();
 eventComponent.Subscribe(DownloadSuccessEventArgs.EventId, OnDownloadSuccess);
+eventComponent.Subscribe(DownloadFailureEventArgs.EventId, OnDownloadFailure);
 
-// ダウンロード成功コールバック
+// ダウンロードタスクを追加
+int serialId = downloadComponent.AddDownload(
+    "/ローカル保存パス/file.zip",    // downloadPath
+    "https://example.com/file.zip"   // downloadUri
+);
+
 void OnDownloadSuccess(object sender, GameEventArgs e)
 {
-    DownloadSuccessEventArgs ne = (DownloadSuccessEventArgs)e;
-    if (ne.SerialId == serialId)
+    var args = (DownloadSuccessEventArgs)e;
+    if (args.SerialId == serialId)
     {
-        // ダウンロード成功の処理
+        // ダウンロード完了
     }
+}
+
+void OnDownloadFailure(object sender, GameEventArgs e)
+{
+    var args = (DownloadFailureEventArgs)e;
+    Debug.LogError($"ダウンロード失敗：{args.ErrorMessage}");
 }
 ```
 
-> **注意：** このコンポーネントは [Event イベントコンポーネント](https://github.com/AlianBlank/com.gameframex.unity.event) に依存しています。
+### 非同期の使用方法
 
-## ドキュメントとリソース
+```csharp
+var downloadComponent = GameEntry.GetComponent<DownloadComponent>();
+
+bool success = await downloadComponent.Download(
+    "/ローカル保存パス/file.zip",
+    "https://example.com/file.zip"
+);
+
+if (success)
+{
+    // ダウンロード完了
+}
+```
+
+### タグと優先度
+
+```csharp
+// タグと優先度を指定して追加
+int serialId = downloadComponent.AddDownload(
+    downloadPath, downloadUri,
+    tag: "assets",       // グループラベル
+    priority: 10         // 高いほど優先
+);
+
+// タグで照会
+TaskInfo[] infos = downloadComponent.GetDownloadInfos("assets");
+
+// タググループの全タスクを削除
+downloadComponent.RemoveDownloads("assets");
+```
+
+### 一時停止・再開
+
+```csharp
+downloadComponent.Paused = true;   // 全ダウンロードを一時停止
+downloadComponent.Paused = false;  // 再開
+```
+
+## API リファレンス
+
+### コアプロパティ
+
+| プロパティ | 型 | 説明 |
+|-----------|-----|------|
+| `Paused` | `bool` | 全ダウンロードの一時停止・再開 |
+| `Timeout` | `float` | ダウンロードタイムアウト（秒）、デフォルト 30 |
+| `FlushSize` | `int` | ディスク書き込み閾値（バイト）、デフォルト 1 MB |
+| `CurrentSpeed` | `float` | 現在の総ダウンロード速度 |
+| `TotalAgentCount` | `int` | ダウンロードエージェント総数 |
+| `FreeAgentCount` | `int` | アイドルエージェント数 |
+| `WorkingAgentCount` | `int` | 稼働中エージェント数 |
+| `WaitingTaskCount` | `int` | エージェント待ちタスク数 |
+
+### 主要メソッド
+
+| メソッド | 戻り値 | 説明 |
+|---------|--------|------|
+| `AddDownload(path, uri, ...)` | `int` | タスクを追加、シリアル ID を返す |
+| `Download(path, uri)` | `Task<bool>` | タスクを追加、await 可能 |
+| `RemoveDownload(serialId)` | `bool` | 単一タスクを削除 |
+| `RemoveDownloads(tag)` | `int` | 指定タグの全タスクを削除 |
+| `RemoveAllDownloads()` | `int` | 全タスクを削除 |
+| `GetDownloadInfo(serialId)` | `TaskInfo` | 単一タスクを照会 |
+| `GetDownloadInfos(tag)` | `TaskInfo[]` | タグでタスクを照会 |
+| `GetAllDownloadInfos()` | `TaskInfo[]` | 全タスクを照会 |
+
+## 依存関係
+
+- [com.gameframex.unity.event](https://github.com/AlianBlank/com.gameframex.unity.event) >= 1.1.0
+
+## リンク
 
 - [ドキュメント](https://gameframex.doc.alianblank.com)
-
-## コミュニティとサポート
-
+- [変更履歴](https://github.com/gameframex/com.gameframex.unity.download/releases)
 - [QQグループ](https://qm.qq.com/q/5kbDVBdUeS)
-
-## 変更履歴
-
-変更履歴は [Releases](https://github.com/gameframex/com.gameframex.unity.download/releases) をご覧ください。
 
 ## ライセンス
 
-このプロジェクトはオープンソースです。詳細は [LICENSE](LICENSE.md) をご覧ください。
+本プロジェクトはデュアルライセンスで公開されています。詳細は [LICENSE](LICENSE.md) をご覧ください。

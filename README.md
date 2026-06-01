@@ -18,26 +18,34 @@ All-in-One Solution for Indie Game Development · Empowering Indie Developers' D
 
 ---
 
-## Project Overview
+## Overview
 
-The **Download Component** provides interfaces for managing download queues, handling download tasks, and providing real-time updates on download status.
+Multi-agent download manager for Unity. Handles concurrent file downloads with priority queuing, configurable agent pools, pause/resume, real-time speed reporting, and event-driven callbacks.
 
-## Quick Start
+## Features
 
-### Installation
+- **Multi-agent concurrency** — Configurable agent pool (default 3 agents) for parallel downloads
+- **Priority scheduling** — Higher priority tasks are dispatched first
+- **Tag-based grouping** — Add, query, and remove tasks by tag
+- **Pause & resume** — Globally pause/resume all downloads via `Paused`
+- **Timeout & flush** — Per-component timeout and disk flush threshold (`FlushSize`) for breakpoint resume
+- **Real-time metrics** — `CurrentSpeed`, agent counts, and waiting task count
+- **Event-driven** — `DownloadStart` / `DownloadUpdate` / `DownloadSuccess` / `DownloadFailure` events via the Event Component
+- **Async/await support** — `Download()` returns `Task<bool>` for awaitable downloads
+- **Pluggable backends** — Built-in `UnityWebRequestDownloadAgentHelper`; swap via Inspector or implement `IDownloadAgentHelper`
+
+## Installation
 
 Choose one of the following methods:
 
-1. Edit your Unity project's `Packages/manifest.json` and add the `scopedRegistries` section:
+1. **Scoped Registry (recommended)** — Edit `Packages/manifest.json`:
    ```json
    {
      "scopedRegistries": [
        {
          "name": "GameFrameX",
          "url": "https://gameframex.upm.alianblank.uk",
-         "scopes": [
-           "com.gameframex"
-         ]
+         "scopes": ["com.gameframex"]
        }
      ],
      "dependencies": {
@@ -46,105 +54,122 @@ Choose one of the following methods:
    }
    ```
 
-   `scopes` controls which packages are resolved through this registry. Only packages whose names start with `com.gameframex` will be fetched from it.
-2. Use **Packages Manager** in Unity with **Git URL**: `https://github.com/AlianBlank/com.gameframex.unity.download.git`
-3. Clone the repository into your Unity project's `Packages` directory. It will be loaded automatically.
+2. **Git URL** — In Unity Package Manager, add `https://github.com/AlianBlank/com.gameframex.unity.download.git`
+3. **Local clone** — Clone into your project's `Packages/` directory
 
-## Usage Examples
+## Quick Start
 
-`DownloadComponent` is a game framework component for handling download tasks. It manages download queues, processes download tasks, and provides real-time status updates.
-
-### Features
-
-- Manage multiple download tasks
-- Support for resuming interrupted downloads
-- Priority-based task scheduling
-- Real-time download progress and speed updates
-- Event-driven notifications for download stages
-
-### Core Properties
-
-- `Paused`: Gets or sets whether downloads are paused.
-- `TotalAgentCount`: Gets the total number of download agents.
-- `FreeAgentCount`: Gets the number of available download agents.
-- `WorkingAgentCount`: Gets the number of working download agents.
-- `WaitingTaskCount`: Gets the number of waiting download tasks.
-- `Timeout`: Gets or sets the download timeout duration.
-- `FlushSize`: Gets or sets the threshold size for writing to disk.
-- `CurrentSpeed`: Gets the current download speed.
-
-### Adding Download Tasks
+### Event-based usage
 
 ```csharp
-// Add a download task with the specified path and URI
-public int AddDownload(string downloadPath, string downloadUri);
+// Get the DownloadComponent (attached to GameEntry)
+var downloadComponent = GameEntry.GetComponent<DownloadComponent>();
 
-// Add a download task with the specified path, URI, and tag
-public int AddDownload(string downloadPath, string downloadUri, string tag);
-
-// Add a download task with the specified path, URI, and priority
-public int AddDownload(string downloadPath, string downloadUri, int priority);
-
-// Add a download task with the specified path, URI, and user data
-public int AddDownload(string downloadPath, string downloadUri, object userData);
-```
-
-### Removing Download Tasks
-
-```csharp
-// Remove a download task by serial ID
-public bool RemoveDownload(int serialId);
-
-// Remove download tasks by tag
-public int RemoveDownloads(string tag);
-
-// Remove all download tasks
-public int RemoveAllDownloads();
-```
-
-### Event Notifications
-
-`DownloadComponent` provides events for receiving notifications when download tasks start, update, succeed, or fail.
-
-- `DownloadStart`: Triggered when a download starts.
-- `DownloadUpdate`: Triggered when a download updates.
-- `DownloadSuccess`: Triggered when a download succeeds.
-- `DownloadFailure`: Triggered when a download fails.
-
-### Example
-
-```csharp
-// Assuming a downloadComponent instance exists
-int serialId = downloadComponent.AddDownload("local/storage/path", "https://example.com/file.zip");
-
-// Subscribe to download success event via event component
+// Subscribe to events via EventComponent
+var eventComponent = GameEntry.GetComponent<EventComponent>();
 eventComponent.Subscribe(DownloadSuccessEventArgs.EventId, OnDownloadSuccess);
+eventComponent.Subscribe(DownloadFailureEventArgs.EventId, OnDownloadFailure);
 
-// Download success callback
+// Add a download task
+int serialId = downloadComponent.AddDownload(
+    "/local/save/path/file.zip",    // downloadPath
+    "https://example.com/file.zip"   // downloadUri
+);
+
 void OnDownloadSuccess(object sender, GameEventArgs e)
 {
-    DownloadSuccessEventArgs ne = (DownloadSuccessEventArgs)e;
-    if (ne.SerialId == serialId)
+    var args = (DownloadSuccessEventArgs)e;
+    if (args.SerialId == serialId)
     {
-        // Handle download success
+        // Download complete
     }
+}
+
+void OnDownloadFailure(object sender, GameEventArgs e)
+{
+    var args = (DownloadFailureEventArgs)e;
+    Debug.LogError($"Download failed: {args.ErrorMessage}");
 }
 ```
 
-> **Note:** This component depends on the [Event Component](https://github.com/AlianBlank/com.gameframex.unity.event).
+### Async/await usage
 
-## Documentation & Resources
+```csharp
+var downloadComponent = GameEntry.GetComponent<DownloadComponent>();
+
+bool success = await downloadComponent.Download(
+    "/local/save/path/file.zip",
+    "https://example.com/file.zip"
+);
+
+if (success)
+{
+    // Download complete
+}
+```
+
+### Tagged & prioritized downloads
+
+```csharp
+// Add with tag and priority
+int serialId = downloadComponent.AddDownload(
+    downloadPath, downloadUri,
+    tag: "assets",       // group label
+    priority: 10         // higher = sooner
+);
+
+// Query by tag
+TaskInfo[] infos = downloadComponent.GetDownloadInfos("assets");
+
+// Remove all tasks in a tag group
+downloadComponent.RemoveDownloads("assets");
+```
+
+### Pause & resume
+
+```csharp
+downloadComponent.Paused = true;   // pause all downloads
+downloadComponent.Paused = false;  // resume
+```
+
+## API Reference
+
+### Core Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `Paused` | `bool` | Pause or resume all downloads |
+| `Timeout` | `float` | Download timeout in seconds (default 30) |
+| `FlushSize` | `int` | Disk write threshold in bytes (default 1 MB) |
+| `CurrentSpeed` | `float` | Current aggregate download speed |
+| `TotalAgentCount` | `int` | Total number of download agents |
+| `FreeAgentCount` | `int` | Available (idle) agents |
+| `WorkingAgentCount` | `int` | Busy agents |
+| `WaitingTaskCount` | `int` | Tasks waiting for a free agent |
+
+### Key Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `AddDownload(path, uri, ...)` | `int` | Add a task; returns serial ID |
+| `Download(path, uri)` | `Task<bool>` | Add a task; awaitable |
+| `RemoveDownload(serialId)` | `bool` | Remove a single task |
+| `RemoveDownloads(tag)` | `int` | Remove all tasks with the given tag |
+| `RemoveAllDownloads()` | `int` | Remove all tasks |
+| `GetDownloadInfo(serialId)` | `TaskInfo` | Query a single task |
+| `GetDownloadInfos(tag)` | `TaskInfo[]` | Query tasks by tag |
+| `GetAllDownloadInfos()` | `TaskInfo[]` | Query all tasks |
+
+## Dependencies
+
+- [com.gameframex.unity.event](https://github.com/AlianBlank/com.gameframex.unity.event) >= 1.1.0
+
+## Links
 
 - [Documentation](https://gameframex.doc.alianblank.com)
-
-## Community & Support
-
+- [Changelog](https://github.com/gameframex/com.gameframex.unity.download/releases)
 - [QQ Group](https://qm.qq.com/q/5kbDVBdUeS)
-
-## Changelog
-
-See [Releases](https://github.com/gameframex/com.gameframex.unity.download/releases) for changelog.
 
 ## License
 
-This project is open source. See [LICENSE](LICENSE.md) for details.
+This project is dual-licensed under [MIT](LICENSE.md) and [Apache-2.0](LICENSE.md).

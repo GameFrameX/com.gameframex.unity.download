@@ -18,24 +18,32 @@
 
 ---
 
-## 项目简介
+## 概述
 
-**Download 下载任务组件 (Download Component)** - 提供管理下载队列、处理下载任务，并提供下载状态的实时更新相关的接口。
+Unity 多代理下载管理器。支持并发文件下载、优先级队列、可配置代理池、暂停/恢复、实时速度上报，以及事件驱动的回调通知。
 
-## 快速开始
+## 功能特性
 
-### 安装方式（任选其一）
+- **多代理并发** — 可配置代理池（默认 3 个代理）并行下载
+- **优先级调度** — 高优先级任务优先派发
+- **标签分组** — 按标签添加、查询和移除任务
+- **暂停与恢复** — 通过 `Paused` 全局暂停/恢复所有下载
+- **超时与刷盘** — 组件级超时设置和磁盘写入阈值（`FlushSize`），支持断点续传
+- **实时指标** — `CurrentSpeed`、代理计数和等待任务数
+- **事件驱动** — 通过事件组件触发 `DownloadStart` / `DownloadUpdate` / `DownloadSuccess` / `DownloadFailure`
+- **异步支持** — `Download()` 返回 `Task<bool>`，支持 await
+- **可插拔后端** — 内置 `UnityWebRequestDownloadAgentHelper`；可通过 Inspector 切换或实现 `IDownloadAgentHelper`
 
-1. 编辑 Unity 项目的 `Packages/manifest.json`，添加 `scopedRegistries` 部分：
+## 安装方式（任选其一）
+
+1. **Scoped Registry（推荐）** — 编辑 `Packages/manifest.json`：
    ```json
    {
      "scopedRegistries": [
        {
          "name": "GameFrameX",
          "url": "https://gameframex.upm.alianblank.uk",
-         "scopes": [
-           "com.gameframex"
-         ]
+         "scopes": ["com.gameframex"]
        }
      ],
      "dependencies": {
@@ -45,104 +53,122 @@
    ```
 
    `scopes` 控制哪些包通过此注册表解析。只有以 `com.gameframex` 开头的包才会从这个注册表获取。
-2. 在 Unity 的 `Packages Manager` 中使用 `Git URL` 的方式添加库，地址为：`https://github.com/AlianBlank/com.gameframex.unity.download.git`
-3. 直接下载仓库放置到 Unity 项目的 `Packages` 目录下，会自动加载识别。
+2. **Git URL** — 在 Unity Package Manager 中添加 `https://github.com/AlianBlank/com.gameframex.unity.download.git`
+3. **本地克隆** — 克隆到项目的 `Packages/` 目录
 
-## 使用示例
+## 快速开始
 
-`DownloadComponent` 是一个用于处理下载任务的游戏框架组件。它负责管理下载队列、处理下载任务，并提供下载状态的实时更新。
-
-### 功能概述
-
-- 管理多个下载任务
-- 支持断点续传功能
-- 提供下载任务的优先级设置
-- 实时更新下载进度和下载速度
-- 可以通过事件接收下载的各个阶段状态
-
-### 核心属性
-
-- `Paused`：获取或设置下载是否被暂停。
-- `TotalAgentCount`：获取下载代理总数量。
-- `FreeAgentCount`：获取可用下载代理数量。
-- `WorkingAgentCount`：获取工作中下载代理数量。
-- `WaitingTaskCount`：获取等待下载任务数量。
-- `Timeout`：获取或设置下载超时时长。
-- `FlushSize`：获取或设置写入磁盘的临界大小。
-- `CurrentSpeed`：获取当前下载速度。
-
-### 如何增加下载任务
+### 事件驱动用法
 
 ```csharp
-// 根据指定的下载路径和URI增加下载任务
-public int AddDownload(string downloadPath, string downloadUri);
+// 获取 DownloadComponent（挂载在 GameEntry 上）
+var downloadComponent = GameEntry.GetComponent<DownloadComponent>();
 
-// 根据指定的下载路径、URI和任务标签增加下载任务
-public int AddDownload(string downloadPath, string downloadUri, string tag);
-
-// 根据指定的下载路径、URI和优先级增加下载任务
-public int AddDownload(string downloadPath, string downloadUri, int priority);
-
-// 根据指定的下载路径、URI和用户自定义数据增加下载任务
-public int AddDownload(string downloadPath, string downloadUri, object userData);
-```
-
-### 如何移除下载任务
-
-```csharp
-// 根据序列编号移除下载任务
-public bool RemoveDownload(int serialId);
-
-// 根据标签移除下载任务
-public int RemoveDownloads(string tag);
-
-// 移除所有下载任务
-public int RemoveAllDownloads();
-```
-
-### 事件通知
-
-`DownloadComponent` 提供事件，以便于当下载任务开始、更新、成功、失败时接收通知。
-
-- `DownloadStart`：当下载开始时触发。
-- `DownloadUpdate`：当下载更新时触发。
-- `DownloadSuccess`：当下载成功时触发。
-- `DownloadFailure`：当下载失败时触发。
-
-### 示例
-
-```csharp
-// 假设已经存在 downloadComponent 实例
-int serialId = downloadComponent.AddDownload("本地存储路径", "下载链接");
-
-// 通过事件组件订阅下载成功事件
+// 通过 EventComponent 订阅事件
+var eventComponent = GameEntry.GetComponent<EventComponent>();
 eventComponent.Subscribe(DownloadSuccessEventArgs.EventId, OnDownloadSuccess);
+eventComponent.Subscribe(DownloadFailureEventArgs.EventId, OnDownloadFailure);
 
-// 下载成功回调
+// 添加下载任务
+int serialId = downloadComponent.AddDownload(
+    "/本地保存路径/file.zip",      // downloadPath
+    "https://example.com/file.zip"  // downloadUri
+);
+
 void OnDownloadSuccess(object sender, GameEventArgs e)
 {
-    DownloadSuccessEventArgs ne = (DownloadSuccessEventArgs)e;
-    if (ne.SerialId == serialId)
+    var args = (DownloadSuccessEventArgs)e;
+    if (args.SerialId == serialId)
     {
-        // 处理下载成功
+        // 下载完成
     }
+}
+
+void OnDownloadFailure(object sender, GameEventArgs e)
+{
+    var args = (DownloadFailureEventArgs)e;
+    Debug.LogError($"下载失败：{args.ErrorMessage}");
 }
 ```
 
-> **注意：** 此组件依赖于 [Event 事件组件](https://github.com/AlianBlank/com.gameframex.unity.event)。
+### 异步用法
 
-## 文档与资源
+```csharp
+var downloadComponent = GameEntry.GetComponent<DownloadComponent>();
+
+bool success = await downloadComponent.Download(
+    "/本地保存路径/file.zip",
+    "https://example.com/file.zip"
+);
+
+if (success)
+{
+    // 下载完成
+}
+```
+
+### 标签与优先级
+
+```csharp
+// 带标签和优先级添加
+int serialId = downloadComponent.AddDownload(
+    downloadPath, downloadUri,
+    tag: "assets",       // 分组标签
+    priority: 10         // 数值越高越优先
+);
+
+// 按标签查询
+TaskInfo[] infos = downloadComponent.GetDownloadInfos("assets");
+
+// 移除标签组内所有任务
+downloadComponent.RemoveDownloads("assets");
+```
+
+### 暂停与恢复
+
+```csharp
+downloadComponent.Paused = true;   // 暂停所有下载
+downloadComponent.Paused = false;  // 恢复下载
+```
+
+## API 参考
+
+### 核心属性
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `Paused` | `bool` | 暂停或恢复所有下载 |
+| `Timeout` | `float` | 下载超时时间（秒），默认 30 |
+| `FlushSize` | `int` | 磁盘写入阈值（字节），默认 1 MB |
+| `CurrentSpeed` | `float` | 当前总下载速度 |
+| `TotalAgentCount` | `int` | 下载代理总数 |
+| `FreeAgentCount` | `int` | 空闲代理数 |
+| `WorkingAgentCount` | `int` | 工作中代理数 |
+| `WaitingTaskCount` | `int` | 等待代理的任务数 |
+
+### 主要方法
+
+| 方法 | 返回值 | 说明 |
+|------|--------|------|
+| `AddDownload(path, uri, ...)` | `int` | 添加任务，返回序列 ID |
+| `Download(path, uri)` | `Task<bool>` | 添加任务，可 await |
+| `RemoveDownload(serialId)` | `bool` | 移除单个任务 |
+| `RemoveDownloads(tag)` | `int` | 移除指定标签的所有任务 |
+| `RemoveAllDownloads()` | `int` | 移除所有任务 |
+| `GetDownloadInfo(serialId)` | `TaskInfo` | 查询单个任务 |
+| `GetDownloadInfos(tag)` | `TaskInfo[]` | 按标签查询任务 |
+| `GetAllDownloadInfos()` | `TaskInfo[]` | 查询所有任务 |
+
+## 依赖
+
+- [com.gameframex.unity.event](https://github.com/AlianBlank/com.gameframex.unity.event) >= 1.1.0
+
+## 链接
 
 - [文档](https://gameframex.doc.alianblank.com)
-
-## 社区与支持
-
+- [更新日志](https://github.com/gameframex/com.gameframex.unity.download/releases)
 - [QQ群](https://qm.qq.com/q/5kbDVBdUeS)
-
-## 更新日志
-
-查看 [Releases](https://github.com/gameframex/com.gameframex.unity.download/releases) 了解更新日志。
 
 ## 开源协议
 
-本项目开源，详情请参阅 [LICENSE](LICENSE.md)。
+本项目采用双许可证发布，详见 [LICENSE](LICENSE.md)。

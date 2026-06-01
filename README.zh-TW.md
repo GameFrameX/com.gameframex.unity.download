@@ -18,24 +18,32 @@
 
 ---
 
-## 項目簡介
+## 概述
 
-**Download 下載任務組件 (Download Component)** - 提供管理下載佇列、處理下載任務，並提供下載狀態的即時更新相關的介面。
+Unity 多代理下載管理器。支援並行檔案下載、優先級佇列、可配置代理池、暫停/恢復、即時速度回報，以及事件驅動的回調通知。
 
-## 快速開始
+## 功能特性
 
-### 安裝方式（任選其一）
+- **多代理並行** — 可配置代理池（預設 3 個代理）平行下載
+- **優先級排程** — 高優先級任務優先派發
+- **標籤分組** — 按標籤新增、查詢和移除任務
+- **暫停與恢復** — 透過 `Paused` 全域暫停/恢復所有下載
+- **逾時與刷盤** — 組件級逾時設定和磁碟寫入閾值（`FlushSize`），支援斷點續傳
+- **即時指標** — `CurrentSpeed`、代理計數和等待任務數
+- **事件驅動** — 透過事件組件觸發 `DownloadStart` / `DownloadUpdate` / `DownloadSuccess` / `DownloadFailure`
+- **非同步支援** — `Download()` 回傳 `Task<bool>`，支援 await
+- **可插拔後端** — 內建 `UnityWebRequestDownloadAgentHelper`；可透過 Inspector 切換或實作 `IDownloadAgentHelper`
 
-1. 編輯 Unity 專案的 `Packages/manifest.json`，添加 `scopedRegistries` 部分：
+## 安裝方式（任選其一）
+
+1. **Scoped Registry（推薦）** — 編輯 `Packages/manifest.json`：
    ```json
    {
      "scopedRegistries": [
        {
          "name": "GameFrameX",
          "url": "https://gameframex.upm.alianblank.uk",
-         "scopes": [
-           "com.gameframex"
-         ]
+         "scopes": ["com.gameframex"]
        }
      ],
      "dependencies": {
@@ -45,104 +53,122 @@
    ```
 
    `scopes` 控制哪些套件透過此註冊表解析。只有以 `com.gameframex` 開頭的套件才會從這個註冊表取得。
-2. 在 Unity 的 `Packages Manager` 中使用 `Git URL` 的方式新增庫，地址為：`https://github.com/AlianBlank/com.gameframex.unity.download.git`
-3. 直接下載倉庫放置到 Unity 專案的 `Packages` 目錄下，會自動載入識別。
+2. **Git URL** — 在 Unity Package Manager 中新增 `https://github.com/AlianBlank/com.gameframex.unity.download.git`
+3. **本機克隆** — 克隆到專案的 `Packages/` 目錄
 
-## 使用範例
+## 快速開始
 
-`DownloadComponent` 是一個用於處理下載任務的遊戲框架組件。它負責管理下載佇列、處理下載任務，並提供下載狀態的即時更新。
-
-### 功能概述
-
-- 管理多個下載任務
-- 支援斷點續傳功能
-- 提供下載任務的優先級設定
-- 即時更新下載進度和下載速度
-- 可以透過事件接收下載的各個階段狀態
-
-### 核心屬性
-
-- `Paused`：取得或設定下載是否被暫停。
-- `TotalAgentCount`：取得下載代理總數量。
-- `FreeAgentCount`：取得可用下載代理數量。
-- `WorkingAgentCount`：取得工作中下載代理數量。
-- `WaitingTaskCount`：取得等待下載任務數量。
-- `Timeout`：取得或設定下載逾時時長。
-- `FlushSize`：取得或設定寫入磁碟的臨界大小。
-- `CurrentSpeed`：取得目前下載速度。
-
-### 如何增加下載任務
+### 事件驅動用法
 
 ```csharp
-// 根據指定的下載路徑和URI增加下載任務
-public int AddDownload(string downloadPath, string downloadUri);
+// 取得 DownloadComponent（掛載在 GameEntry 上）
+var downloadComponent = GameEntry.GetComponent<DownloadComponent>();
 
-// 根據指定的下載路徑、URI和任務標籤增加下載任務
-public int AddDownload(string downloadPath, string downloadUri, string tag);
-
-// 根據指定的下載路徑、URI和優先級增加下載任務
-public int AddDownload(string downloadPath, string downloadUri, int priority);
-
-// 根據指定的下載路徑、URI和使用者自訂資料增加下載任務
-public int AddDownload(string downloadPath, string downloadUri, object userData);
-```
-
-### 如何移除下載任務
-
-```csharp
-// 根據序列編號移除下載任務
-public bool RemoveDownload(int serialId);
-
-// 根據標籤移除下載任務
-public int RemoveDownloads(string tag);
-
-// 移除所有下載任務
-public int RemoveAllDownloads();
-```
-
-### 事件通知
-
-`DownloadComponent` 提供事件，以便於當下載任務開始、更新、成功、失敗時接收通知。
-
-- `DownloadStart`：當下載開始時觸發。
-- `DownloadUpdate`：當下載更新時觸發。
-- `DownloadSuccess`：當下載成功時觸發。
-- `DownloadFailure`：當下載失敗時觸發。
-
-### 範例
-
-```csharp
-// 假設已經存在 downloadComponent 實例
-int serialId = downloadComponent.AddDownload("本地儲存路徑", "下載連結");
-
-// 透過事件組件訂閱下載成功事件
+// 透過 EventComponent 訂閱事件
+var eventComponent = GameEntry.GetComponent<EventComponent>();
 eventComponent.Subscribe(DownloadSuccessEventArgs.EventId, OnDownloadSuccess);
+eventComponent.Subscribe(DownloadFailureEventArgs.EventId, OnDownloadFailure);
 
-// 下載成功回呼
+// 新增下載任務
+int serialId = downloadComponent.AddDownload(
+    "/本機儲存路徑/file.zip",      // downloadPath
+    "https://example.com/file.zip"  // downloadUri
+);
+
 void OnDownloadSuccess(object sender, GameEventArgs e)
 {
-    DownloadSuccessEventArgs ne = (DownloadSuccessEventArgs)e;
-    if (ne.SerialId == serialId)
+    var args = (DownloadSuccessEventArgs)e;
+    if (args.SerialId == serialId)
     {
-        // 處理下載成功
+        // 下載完成
     }
+}
+
+void OnDownloadFailure(object sender, GameEventArgs e)
+{
+    var args = (DownloadFailureEventArgs)e;
+    Debug.LogError($"下載失敗：{args.ErrorMessage}");
 }
 ```
 
-> **注意：** 此組件依賴於 [Event 事件組件](https://github.com/AlianBlank/com.gameframex.unity.event)。
+### 非同步用法
 
-## 文檔與資源
+```csharp
+var downloadComponent = GameEntry.GetComponent<DownloadComponent>();
+
+bool success = await downloadComponent.Download(
+    "/本機儲存路徑/file.zip",
+    "https://example.com/file.zip"
+);
+
+if (success)
+{
+    // 下載完成
+}
+```
+
+### 標籤與優先級
+
+```csharp
+// 帶標籤和優先級新增
+int serialId = downloadComponent.AddDownload(
+    downloadPath, downloadUri,
+    tag: "assets",       // 分組標籤
+    priority: 10         // 數值越高越優先
+);
+
+// 按標籤查詢
+TaskInfo[] infos = downloadComponent.GetDownloadInfos("assets");
+
+// 移除標籤組內所有任務
+downloadComponent.RemoveDownloads("assets");
+```
+
+### 暫停與恢復
+
+```csharp
+downloadComponent.Paused = true;   // 暫停所有下載
+downloadComponent.Paused = false;  // 恢復下載
+```
+
+## API 參考
+
+### 核心屬性
+
+| 屬性 | 類型 | 說明 |
+|------|------|------|
+| `Paused` | `bool` | 暫停或恢復所有下載 |
+| `Timeout` | `float` | 下載逾時時間（秒），預設 30 |
+| `FlushSize` | `int` | 磁碟寫入閾值（位元組），預設 1 MB |
+| `CurrentSpeed` | `float` | 目前總下載速度 |
+| `TotalAgentCount` | `int` | 下載代理總數 |
+| `FreeAgentCount` | `int` | 閒置代理數 |
+| `WorkingAgentCount` | `int` | 工作中代理數 |
+| `WaitingTaskCount` | `int` | 等待代理的任務數 |
+
+### 主要方法
+
+| 方法 | 回傳值 | 說明 |
+|------|--------|------|
+| `AddDownload(path, uri, ...)` | `int` | 新增任務，回傳序列 ID |
+| `Download(path, uri)` | `Task<bool>` | 新增任務，可 await |
+| `RemoveDownload(serialId)` | `bool` | 移除單一任務 |
+| `RemoveDownloads(tag)` | `int` | 移除指定標籤的所有任務 |
+| `RemoveAllDownloads()` | `int` | 移除所有任務 |
+| `GetDownloadInfo(serialId)` | `TaskInfo` | 查詢單一任務 |
+| `GetDownloadInfos(tag)` | `TaskInfo[]` | 按標籤查詢任務 |
+| `GetAllDownloadInfos()` | `TaskInfo[]` | 查詢所有任務 |
+
+## 依賴
+
+- [com.gameframex.unity.event](https://github.com/AlianBlank/com.gameframex.unity.event) >= 1.1.0
+
+## 連結
 
 - [文檔](https://gameframex.doc.alianblank.com)
-
-## 社區與支援
-
+- [更新日誌](https://github.com/gameframex/com.gameframex.unity.download/releases)
 - [QQ群](https://qm.qq.com/q/5kbDVBdUeS)
-
-## 更新日誌
-
-查看 [Releases](https://github.com/gameframex/com.gameframex.unity.download/releases) 了解更新日誌。
 
 ## 開源協議
 
-本專案開源，詳情請參閱 [LICENSE](LICENSE.md)。
+本專案採用雙授權發布，詳見 [LICENSE](LICENSE.md)。
