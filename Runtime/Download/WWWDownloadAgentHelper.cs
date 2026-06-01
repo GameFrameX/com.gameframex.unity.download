@@ -29,13 +29,12 @@
 
 #if !UNITY_2018_3_OR_NEWER
 
-using GameFramework;
-using GameFramework.Download;
+using GameFrameX.Runtime;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnityGameFramework.Runtime
+namespace GameFrameX.Download.Runtime
 {
     /// <summary>
     /// WWW 下载代理辅助器。
@@ -246,9 +245,9 @@ namespace UnityGameFramework.Runtime
 
             if (!string.IsNullOrEmpty(m_WWW.error))
             {
-                DownloadAgentHelperErrorEventArgs dodwnloadAgentHelperErrorEventArgs = DownloadAgentHelperErrorEventArgs.Create(m_WWW.error.StartsWith(RangeNotSatisfiableErrorCode.ToString(), StringComparison.Ordinal), m_WWW.error);
-                m_DownloadAgentHelperErrorEventHandler(this, dodwnloadAgentHelperErrorEventArgs);
-                ReferencePool.Release(dodwnloadAgentHelperErrorEventArgs);
+                DownloadAgentHelperErrorEventArgs downloadAgentHelperErrorEventArgs = DownloadAgentHelperErrorEventArgs.Create(m_WWW.error.StartsWith(RangeNotSatisfiableErrorCode.ToString(), StringComparison.Ordinal), m_WWW.error);
+                m_DownloadAgentHelperErrorEventHandler(this, downloadAgentHelperErrorEventArgs);
+                ReferencePool.Release(downloadAgentHelperErrorEventArgs);
             }
             else
             {
