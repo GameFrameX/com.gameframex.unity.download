@@ -53,13 +53,19 @@ namespace GameFrameX.Download.Runtime
             {
                 if (m_Owner != null && m_Owner.m_UnityWebRequest != null && dataLength > 0)
                 {
-                    DownloadAgentHelperUpdateBytesEventArgs downloadAgentHelperUpdateBytesEventArgs = DownloadAgentHelperUpdateBytesEventArgs.Create(data, 0, dataLength);
-                    m_Owner.m_DownloadAgentHelperUpdateBytesEventHandler(this, downloadAgentHelperUpdateBytesEventArgs);
-                    ReferencePool.Release(downloadAgentHelperUpdateBytesEventArgs);
+                    if (m_Owner.m_DownloadAgentHelperUpdateBytesEventHandler != null)
+                    {
+                        DownloadAgentHelperUpdateBytesEventArgs downloadAgentHelperUpdateBytesEventArgs = DownloadAgentHelperUpdateBytesEventArgs.Create(data, 0, dataLength);
+                        m_Owner.m_DownloadAgentHelperUpdateBytesEventHandler(this, downloadAgentHelperUpdateBytesEventArgs);
+                        ReferencePool.Release(downloadAgentHelperUpdateBytesEventArgs);
+                    }
 
-                    DownloadAgentHelperUpdateLengthEventArgs downloadAgentHelperUpdateLengthEventArgs = DownloadAgentHelperUpdateLengthEventArgs.Create(dataLength);
-                    m_Owner.m_DownloadAgentHelperUpdateLengthEventHandler(this, downloadAgentHelperUpdateLengthEventArgs);
-                    ReferencePool.Release(downloadAgentHelperUpdateLengthEventArgs);
+                    if (m_Owner.m_DownloadAgentHelperUpdateLengthEventHandler != null)
+                    {
+                        DownloadAgentHelperUpdateLengthEventArgs downloadAgentHelperUpdateLengthEventArgs = DownloadAgentHelperUpdateLengthEventArgs.Create(dataLength);
+                        m_Owner.m_DownloadAgentHelperUpdateLengthEventHandler(this, downloadAgentHelperUpdateLengthEventArgs);
+                        ReferencePool.Release(downloadAgentHelperUpdateLengthEventArgs);
+                    }
                 }
 
                 return base.ReceiveData(data, dataLength);

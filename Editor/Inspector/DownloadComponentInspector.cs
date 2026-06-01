@@ -173,7 +173,7 @@ namespace GameFrameX.Download.Editor
 
         protected override void RefreshTypeNames()
         {
-           RefreshComponentTypeNames(typeof(IDownloadManager));
+            RefreshComponentTypeNames(typeof(IDownloadManager));
         }
     }
 }

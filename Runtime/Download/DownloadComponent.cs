@@ -300,7 +300,9 @@ namespace GameFrameX.Download.Runtime
                 return value.TCS.Task;
             }
 
-            return null;
+            var tcs = new TaskCompletionSource<bool>();
+            tcs.TrySetResult(false);
+            return tcs.Task;
         }
 
         /// <summary>
@@ -378,7 +380,11 @@ namespace GameFrameX.Download.Runtime
         /// <returns>是否移除下载任务成功。</returns>
         public bool RemoveDownload(int serialId)
         {
-            m_Downloads.TryRemove(serialId, out _);
+            if (m_Downloads.TryRemove(serialId, out var value))
+            {
+                value.TCS.TrySetCanceled();
+            }
+
             return m_DownloadManager.RemoveDownload(serialId);
         }
 
@@ -389,17 +395,23 @@ namespace GameFrameX.Download.Runtime
         /// <returns>移除下载任务的数量。</returns>
         public int RemoveDownloads(string tag)
         {
-            int serialId = -1;
+            List<int> serialIds = new List<int>();
             foreach (var downloadData in m_Downloads.Values)
             {
                 if (downloadData.Tag == tag)
                 {
-                    serialId = downloadData.SerialId;
-                    break;
+                    serialIds.Add(downloadData.SerialId);
                 }
             }
 
-            m_Downloads.TryRemove(serialId, out _);
+            foreach (var serialId in serialIds)
+            {
+                if (m_Downloads.TryRemove(serialId, out var value))
+                {
+                    value.TCS.TrySetCanceled();
+                }
+            }
+
             return m_DownloadManager.RemoveDownloads(tag);
         }
 
@@ -409,6 +421,11 @@ namespace GameFrameX.Download.Runtime
         /// <returns>移除下载任务的数量。</returns>
         public int RemoveAllDownloads()
         {
+            foreach (var value in m_Downloads.Values)
+            {
+                value.TCS.TrySetCanceled();
+            }
+
             m_Downloads.Clear();
             return m_DownloadManager.RemoveAllDownloads();
         }

@@ -50,10 +50,10 @@ namespace GameFrameX.Download.Runtime
             private long m_SavedLength;
             private bool m_Disposed;
 
-            public Action<DownloadAgent> DownloadAgentStart;
-            public Action<DownloadAgent, int> DownloadAgentUpdate;
-            public Action<DownloadAgent, long> DownloadAgentSuccess;
-            public Action<DownloadAgent, string> DownloadAgentFailure;
+            public event Action<DownloadAgent> DownloadAgentStart;
+            public event Action<DownloadAgent, int> DownloadAgentUpdate;
+            public event Action<DownloadAgent, long> DownloadAgentSuccess;
+            public event Action<DownloadAgent, string> DownloadAgentFailure;
 
             /// <summary>
             /// 初始化下载代理的新实例。
@@ -306,6 +306,12 @@ namespace GameFrameX.Download.Runtime
                 }
                 catch (Exception exception)
                 {
+                    if (m_FileStream != null)
+                    {
+                        m_FileStream.Close();
+                        m_FileStream = null;
+                    }
+
                     DownloadAgentHelperErrorEventArgs downloadAgentHelperErrorEventArgs = DownloadAgentHelperErrorEventArgs.Create(false, exception.ToString());
                     OnDownloadAgentHelperError(this, downloadAgentHelperErrorEventArgs);
                     ReferencePool.Release(downloadAgentHelperErrorEventArgs);
@@ -328,7 +334,10 @@ namespace GameFrameX.Download.Runtime
                 m_DownloadedLength = e.Length;
                 if (m_SavedLength != CurrentLength)
                 {
-                    throw new GameFrameworkException("Internal download error.");
+                    DownloadAgentHelperErrorEventArgs downloadAgentHelperErrorEventArgs = DownloadAgentHelperErrorEventArgs.Create(false, Utility.Text.Format("Internal download error, saved length ({0}) != current length ({1}).", m_SavedLength, CurrentLength));
+                    OnDownloadAgentHelperError(this, downloadAgentHelperErrorEventArgs);
+                    ReferencePool.Release(downloadAgentHelperErrorEventArgs);
+                    return;
                 }
 
                 m_Helper.Reset();
