@@ -1,3 +1,11 @@
+## [1.1.2](https://github.com/gameframex/com.gameframex.unity.download/compare/1.1.1...1.1.2) (2026-06-01)
+
+
+### Bug Fixes
+
+* **download:** 修复 WWWDownloadAgentHelper 命名空间及拼写错误 ([c913f54](https://github.com/gameframex/com.gameframex.unity.download/commit/c913f548adedb3e522a0c05fb26cb9cf3fa104ba))
+* **download:** 修复下载管理器资源泄漏及任务生命周期问题 ([5000883](https://github.com/gameframex/com.gameframex.unity.download/commit/5000883ed7ca25823b07b96d8f7d2b68e88f8687))
+
 ## [1.1.1](https://github.com/gameframex/com.gameframex.unity.download/compare/1.1.0...1.1.1) (2026-05-28)
 
 
