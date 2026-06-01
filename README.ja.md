@@ -26,13 +26,25 @@
 
 ### インストール方法（いずれかを選択）
 
-1. `manifest.json` の `dependencies` に以下を追加：
+1. Unity プロジェクトの `Packages/manifest.json` を編集し、`scopedRegistries` セクションを追加してください：
    ```json
    {
-      "com.gameframex.unity.event": "https://github.com/AlianBlank/com.gameframex.unity.event.git",
-      "com.gameframex.unity.download": "https://github.com/AlianBlank/com.gameframex.unity.download.git"
+     "scopedRegistries": [
+       {
+         "name": "GameFrameX",
+         "url": "https://gameframex.upm.alianblank.uk",
+         "scopes": [
+           "com.gameframex"
+         ]
+       }
+     ],
+     "dependencies": {
+       "com.gameframex.unity.download": "1.1.1"
+     }
    }
    ```
+
+   `scopes` は、どのパッケージをこのレジストリから解決するかを制御します。`com.gameframex` で始まるパッケージのみがこのレジストリから取得されます。
 2. Unity の `Packages Manager` で `Git URL` を使用して追加：`https://github.com/AlianBlank/com.gameframex.unity.download.git`
 3. リポジトリを直接ダウンロードして Unity プロジェクトの `Packages` ディレクトリに配置すると、自動的に読み込まれます。
 
@@ -133,4 +145,4 @@ void OnDownloadSuccess(object sender, GameEventArgs e)
 
 ## ライセンス
 
-このプロジェクトは [MIT ライセンス](https://github.com/gameframex/com.gameframex.unity.download/blob/main/LICENSE) の下で公開されています。
+このプロジェクトはオープンソースです。詳細は [LICENSE](LICENSE.md) をご覧ください。

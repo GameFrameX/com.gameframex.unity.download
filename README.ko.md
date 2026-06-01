@@ -26,13 +26,25 @@
 
 ### 설치 방법 (선택)
 
-1. `manifest.json`의 `dependencies`에 다음 내용을 추가:
+1. Unity 프로젝트의 `Packages/manifest.json`을 편집하여 `scopedRegistries` 섹션을 추가하세요:
    ```json
    {
-      "com.gameframex.unity.event": "https://github.com/AlianBlank/com.gameframex.unity.event.git",
-      "com.gameframex.unity.download": "https://github.com/AlianBlank/com.gameframex.unity.download.git"
+     "scopedRegistries": [
+       {
+         "name": "GameFrameX",
+         "url": "https://gameframex.upm.alianblank.uk",
+         "scopes": [
+           "com.gameframex"
+         ]
+       }
+     ],
+     "dependencies": {
+       "com.gameframex.unity.download": "1.1.1"
+     }
    }
    ```
+
+   `scopes`는 이 레지스트리를 통해 어떤 패키지를 해석할지 제어합니다. `com.gameframex`로 시작하는 패키지만 이 레지스트리에서 가져옵니다.
 2. Unity의 `Packages Manager`에서 `Git URL`을 사용하여 추가: `https://github.com/AlianBlank/com.gameframex.unity.download.git`
 3. 저장소를 직접 다운로드하여 Unity 프로젝트의 `Packages` 디렉토리에 배치하면 자동으로 로드됩니다.
 
@@ -133,4 +145,4 @@ void OnDownloadSuccess(object sender, GameEventArgs e)
 
 ## 라이선스
 
-이 프로젝트는 [MIT 라이선스](https://github.com/gameframex/com.gameframex.unity.download/blob/main/LICENSE)에 따라 배포됩니다.
+이 프로젝트는 오픈 소스입니다. 자세한 내용은 [LICENSE](LICENSE.md)를 참조하세요.

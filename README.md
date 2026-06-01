@@ -12,7 +12,7 @@ All-in-One Solution for Indie Game Development · Empowering Indie Developers' D
 
 [Documentation](https://gameframex.doc.alianblank.com) · [Quick Start](#quick-start) · [QQ Group](https://qm.qq.com/q/5kbDVBdUeS) · **Language**
 
-[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
+**English** | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
 </div>
 
@@ -28,13 +28,25 @@ The **Download Component** provides interfaces for managing download queues, han
 
 Choose one of the following methods:
 
-1. Add to `manifest.json` dependencies:
+1. Edit your Unity project's `Packages/manifest.json` and add the `scopedRegistries` section:
    ```json
    {
-      "com.gameframex.unity.event": "https://github.com/AlianBlank/com.gameframex.unity.event.git",
-      "com.gameframex.unity.download": "https://github.com/AlianBlank/com.gameframex.unity.download.git"
+     "scopedRegistries": [
+       {
+         "name": "GameFrameX",
+         "url": "https://gameframex.upm.alianblank.uk",
+         "scopes": [
+           "com.gameframex"
+         ]
+       }
+     ],
+     "dependencies": {
+       "com.gameframex.unity.download": "1.1.1"
+     }
    }
    ```
+
+   `scopes` controls which packages are resolved through this registry. Only packages whose names start with `com.gameframex` will be fetched from it.
 2. Use **Packages Manager** in Unity with **Git URL**: `https://github.com/AlianBlank/com.gameframex.unity.download.git`
 3. Clone the repository into your Unity project's `Packages` directory. It will be loaded automatically.
 
@@ -135,4 +147,4 @@ See [Releases](https://github.com/gameframex/com.gameframex.unity.download/relea
 
 ## License
 
-This project is licensed under the [MIT License](https://github.com/gameframex/com.gameframex.unity.download/blob/main/LICENSE).
+This project is open source. See [LICENSE](LICENSE.md) for details.
