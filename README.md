@@ -43,26 +43,34 @@ Multi-agent download manager for Unity. Handles concurrent file downloads with p
 
 Choose one of the following methods:
 
-1. **Scoped Registry (recommended)** — Edit `Packages/manifest.json`:
+1. Edit your Unity project's `Packages/manifest.json` and add the `scopedRegistries` section:
    ```json
    {
      "scopedRegistries": [
        {
          "name": "GameFrameX",
          "url": "https://gameframex.upm.alianblank.uk",
-         "scopes": ["com.gameframex"]
+         "scopes": [
+           "com.gameframex"
+         ]
        }
      ],
      "dependencies": {
-       "com.gameframex.unity.download": "1.1.1"
+       "com.gameframex.unity.download": "1.1.2"
      }
    }
    ```
 
-2. **Git URL** — In Unity Package Manager, add `https://github.com/AlianBlank/com.gameframex.unity.download.git`
-3. **Local clone** — Clone into your project's `Packages/` directory
+   `scopes` controls which packages are resolved through this registry. Only packages whose names start with `com.gameframex` will be fetched from it.
 
-
+2. Add to `manifest.json` dependencies:
+   ```json
+   {
+      "com.gameframex.unity.download": "https://github.com/gameframex/com.gameframex.unity.download.git"
+   }
+   ```
+3. Use **Package Manager** in Unity with **Git URL**: `https://github.com/gameframex/com.gameframex.unity.download.git`
+4. Clone the repository into your Unity project's `Packages` directory. It will be loaded automatically.
 ### Event-based usage
 
 ```csharp
