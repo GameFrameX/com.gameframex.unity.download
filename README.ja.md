@@ -12,7 +12,7 @@
 
 <br />
 
-[ドキュメント](https://gameframex.doc.alianblank.com) · [クイックスタート](#クイックスタート) · [QQグループ](https://qm.qq.com/q/5kbDVBdUeS)
+[ドキュメント](https://gameframex.doc.alianblank.com) · [クイックスタート](#クイックスタート) · QQグループ: 467608841 / 233840761
 
 <br />
 
@@ -170,7 +170,7 @@ downloadComponent.Paused = false;  // 再開
 
 - [ドキュメント](https://gameframex.doc.alianblank.com)
 - [変更履歴](https://github.com/gameframex/com.gameframex.unity.download/releases)
-- [QQグループ](https://qm.qq.com/q/5kbDVBdUeS)
+- QQグループ: 467608841 / 233840761
 
 ## ライセンス
 

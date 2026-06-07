@@ -12,7 +12,7 @@ All-in-One Solution for Indie Game Development · Empowering Indie Developers' D
 
 <br />
 
-[Documentation](https://gameframex.doc.alianblank.com) · [Quick Start](#quick-start) · [QQ Group](https://qm.qq.com/q/5kbDVBdUeS)
+[Documentation](https://gameframex.doc.alianblank.com) · [Quick Start](#quick-start) · QQ Group: 467608841 / 233840761
 
 <br />
 
@@ -169,7 +169,7 @@ downloadComponent.Paused = false;  // resume
 
 - [Documentation](https://gameframex.doc.alianblank.com)
 - [Changelog](https://github.com/gameframex/com.gameframex.unity.download/releases)
-- [QQ Group](https://qm.qq.com/q/5kbDVBdUeS)
+- QQ Group: 467608841 / 233840761
 
 ## License
 

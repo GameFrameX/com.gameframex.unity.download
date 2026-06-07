@@ -12,7 +12,7 @@
 
 <br />
 
-[文档](https://gameframex.doc.alianblank.com) · [快速开始](#快速开始) · [QQ群](https://qm.qq.com/q/5kbDVBdUeS)
+[文档](https://gameframex.doc.alianblank.com) · [快速开始](#快速开始) · QQ群: 467608841 / 233840761
 
 <br />
 
@@ -168,7 +168,7 @@ downloadComponent.Paused = false;  // 恢复下载
 
 - [文档](https://gameframex.doc.alianblank.com)
 - [更新日志](https://github.com/gameframex/com.gameframex.unity.download/releases)
-- [QQ群](https://qm.qq.com/q/5kbDVBdUeS)
+- QQ群: 467608841 / 233840761
 
 ## 开源协议
 

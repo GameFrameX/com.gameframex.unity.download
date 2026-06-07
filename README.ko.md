@@ -12,7 +12,7 @@
 
 <br />
 
-[문서](https://gameframex.doc.alianblank.com) · [빠른 시작](#빠른-시작) · [QQ 그룹](https://qm.qq.com/q/5kbDVBdUeS)
+[문서](https://gameframex.doc.alianblank.com) · [빠른 시작](#빠른-시작) · QQ 그룹: 467608841 / 233840761
 
 <br />
 
@@ -170,7 +170,7 @@ downloadComponent.Paused = false;  // 재개
 
 - [문서](https://gameframex.doc.alianblank.com)
 - [변경 로그](https://github.com/gameframex/com.gameframex.unity.download/releases)
-- [QQ 그룹](https://qm.qq.com/q/5kbDVBdUeS)
+- QQ 그룹: 467608841 / 233840761
 
 ## 라이선스
 
