@@ -21,7 +21,7 @@
 
 </div>
 
-## 개요
+## 프로젝트 개요
 
 Unity 멀티 에이전트 다운로드 매니저. 동시 파일 다운로드, 우선순위 큐, 구성 가능한 에이전트 풀, 일시정지/재개, 실시간 속도 보고, 이벤트 기반 콜백을 지원합니다.
 
@@ -174,6 +174,18 @@ downloadComponent.Paused = false;  // 재개
 - [변경 로그](https://github.com/gameframex/com.gameframex.unity.download/releases)
 - QQ 그룹: 467608841 / 233840761
 
+
+## 문서 및 자료
+
+- [문서](https://gameframex.doc.alianblank.com)
+
+## 커뮤니티 및 지원
+
+- QQ 그룹: 467608841 / 233840761
+
+## 변경 로그
+
+[Releases](https://github.com/GameFrameX/gameframex/com.gameframex.unity.download/releases)에서 변경 로그를 확인하세요.
 ## 라이선스
 
 이 프로젝트는 듀얼 라이선스로 제공됩니다. 자세한 내용은 [LICENSE](LICENSE.md)를 참조하세요.

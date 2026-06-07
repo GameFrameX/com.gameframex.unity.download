@@ -21,7 +21,7 @@
 
 </div>
 
-## 概述
+## 项目简介
 
 Unity 多代理下载管理器。支持并发文件下载、优先级队列、可配置代理池、暂停/恢复、实时速度上报，以及事件驱动的回调通知。
 
@@ -172,6 +172,18 @@ downloadComponent.Paused = false;  // 恢复下载
 - [更新日志](https://github.com/gameframex/com.gameframex.unity.download/releases)
 - QQ群: 467608841 / 233840761
 
+
+## 文档与资源
+
+- [官方文档](https://gameframex.doc.alianblank.com)
+
+## 社区与支持
+
+- QQ群: 467608841 / 233840761
+
+## 更新日志
+
+查看 [Releases](https://github.com/GameFrameX/gameframex/com.gameframex.unity.download/releases) 了解更新日志。
 ## 开源协议
 
 本项目采用双许可证发布，详见 [LICENSE](LICENSE.md)。

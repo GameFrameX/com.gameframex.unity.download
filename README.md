@@ -21,7 +21,7 @@ All-in-One Solution for Indie Game Development · Empowering Indie Developers' D
 
 </div>
 
-## Overview
+## Project Overview
 
 Multi-agent download manager for Unity. Handles concurrent file downloads with priority queuing, configurable agent pools, pause/resume, real-time speed reporting, and event-driven callbacks.
 
@@ -37,7 +37,9 @@ Multi-agent download manager for Unity. Handles concurrent file downloads with p
 - **Async/await support** — `Download()` returns `Task<bool>` for awaitable downloads
 - **Pluggable backends** — Built-in `UnityWebRequestDownloadAgentHelper`; swap via Inspector or implement `IDownloadAgentHelper`
 
-## Installation
+## Quick Start
+
+### Installation
 
 Choose one of the following methods:
 
@@ -60,7 +62,6 @@ Choose one of the following methods:
 2. **Git URL** — In Unity Package Manager, add `https://github.com/AlianBlank/com.gameframex.unity.download.git`
 3. **Local clone** — Clone into your project's `Packages/` directory
 
-## Quick Start
 
 ### Event-based usage
 
@@ -173,6 +174,18 @@ downloadComponent.Paused = false;  // resume
 - [Changelog](https://github.com/gameframex/com.gameframex.unity.download/releases)
 - QQ Group: 467608841 / 233840761
 
+
+## Documentation & Resources
+
+- [Documentation](https://gameframex.doc.alianblank.com)
+
+## Community & Support
+
+- QQ Group: 467608841 / 233840761
+
+## Changelog
+
+See [Releases](https://github.com/GameFrameX/gameframex/com.gameframex.unity.download/releases) for changelog.
 ## License
 
 This project is dual-licensed under [MIT](LICENSE.md) and [Apache-2.0](LICENSE.md).
