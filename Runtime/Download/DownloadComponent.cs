@@ -42,6 +42,7 @@ namespace GameFrameX.Download.Runtime
     /// </summary>
     [DisallowMultipleComponent]
     [AddComponentMenu("GameFrameX/Download")]
+    [GameFrameXAutoComponent(-4000)]
     public sealed class DownloadComponent : GameFrameworkComponent
     {
         private const int DefaultPriority = 0;
@@ -52,7 +53,7 @@ namespace GameFrameX.Download.Runtime
 
         [SerializeField] private Transform m_InstanceRoot = null;
 
-        [SerializeField] private string m_DownloadAgentHelperTypeName = "UnityGameFramework.Runtime.UnityWebRequestDownloadAgentHelper";
+        [SerializeField] private string m_DownloadAgentHelperTypeName = "GameFrameX.Download.Runtime.UnityWebRequestDownloadAgentHelper";
 
         [SerializeField] private DownloadAgentHelperBase m_CustomDownloadAgentHelper = null;
 
@@ -166,6 +167,11 @@ namespace GameFrameX.Download.Runtime
             ImplementationComponentType = Utility.Assembly.GetType(componentType);
             InterfaceComponentType = typeof(IDownloadManager);
             base.Awake();
+            if (!IsRuntimeComponentReady)
+            {
+                return;
+            }
+
             m_DownloadManager = GameFrameworkEntry.GetModule<IDownloadManager>();
             if (m_DownloadManager == null)
             {
@@ -183,6 +189,11 @@ namespace GameFrameX.Download.Runtime
 
         private void Start()
         {
+            if (m_DownloadManager == null)
+            {
+                return;
+            }
+
             m_EventComponent = GameEntry.GetComponent<EventComponent>();
             if (m_EventComponent == null)
             {
