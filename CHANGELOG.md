@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/gameframex/com.gameframex.unity.download/compare/1.1.2...1.2.0) (2026-07-03)
+
+
+### Features
+
+* **download:** 适配 GameFrameX 框架自动注册机制 ([a8f2617](https://github.com/gameframex/com.gameframex.unity.download/commit/a8f26171e5afbd850cbf9f0b3d33371257cfe4ae))
+
 ## [1.1.2](https://github.com/gameframex/com.gameframex.unity.download/compare/1.1.1...1.1.2) (2026-06-01)
 
 
