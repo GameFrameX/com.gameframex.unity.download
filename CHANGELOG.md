@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/gameframex/com.gameframex.unity.download/compare/1.2.0...1.2.1) (2026-07-29)
+
+
+### Bug Fixes
+
+* **dependencies:** 更新 com.gameframex.unity.event 和 com.gameframex.unity 版本 ([841dcff](https://github.com/gameframex/com.gameframex.unity.download/commit/841dcff45e8d8c4ad1bb60b3dab2dd60754dc7e7))
+
 # [1.2.0](https://github.com/gameframex/com.gameframex.unity.download/compare/1.1.2...1.2.0) (2026-07-03)
 
 
