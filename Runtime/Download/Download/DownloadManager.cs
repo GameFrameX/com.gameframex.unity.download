@@ -1,4 +1,4 @@
-﻿// ==========================================================================================
+// ==========================================================================================
 //   GameFrameX 组织及其衍生项目的版权、商标、专利及其他相关权利
 //   GameFrameX organization and its derivative projects' copyrights, trademarks, patents, and related rights
 //   均受中华人民共和国及相关国际法律法规保护。
@@ -37,7 +37,7 @@ namespace GameFrameX.Download.Runtime
     /// 下载管理器。
     /// </summary>
     [UnityEngine.Scripting.Preserve]
-    public sealed partial class DownloadManager : GameFrameworkModule, IDownloadManager
+    public sealed partial class DownloadManager : IGameFrameworkModule, IDownloadManager, IUpdatableModule, IShutdownableModule, IPrioritizedModule
     {
         private const int OneMegaBytes = 1024 * 1024;
 
@@ -53,6 +53,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 初始化下载管理器的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public DownloadManager()
         {
             m_TaskPool = new TaskPool<DownloadTask>();
@@ -69,7 +70,8 @@ namespace GameFrameX.Download.Runtime
         /// 获取游戏框架模块优先级。
         /// </summary>
         /// <remarks>优先级较高的模块会优先轮询，并且关闭操作会后进行。</remarks>
-        protected override int Priority
+        [UnityEngine.Scripting.Preserve]
+        public int Priority
         {
             get { return 5; }
         }
@@ -77,6 +79,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取或设置下载是否被暂停。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public bool Paused
         {
             get { return m_TaskPool.Paused; }
@@ -86,6 +89,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取下载代理总数量。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int TotalAgentCount
         {
             get { return m_TaskPool.TotalAgentCount; }
@@ -94,6 +98,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取可用下载代理数量。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int FreeAgentCount
         {
             get { return m_TaskPool.FreeAgentCount; }
@@ -102,6 +107,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取工作中下载代理数量。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int WorkingAgentCount
         {
             get { return m_TaskPool.WorkingAgentCount; }
@@ -110,6 +116,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取等待下载任务数量。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int WaitingTaskCount
         {
             get { return m_TaskPool.WaitingTaskCount; }
@@ -118,6 +125,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取或设置将缓冲区写入磁盘的临界大小。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int FlushSize
         {
             get { return m_FlushSize; }
@@ -127,6 +135,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取或设置下载超时时长，以秒为单位。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public float Timeout
         {
             get { return m_Timeout; }
@@ -136,6 +145,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取当前下载速度。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public float CurrentSpeed
         {
             get { return m_DownloadCounter.CurrentSpeed; }
@@ -182,7 +192,8 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         /// <param name="elapseSeconds">逻辑流逝时间，以秒为单位。</param>
         /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
-        protected override void Update(float elapseSeconds, float realElapseSeconds)
+        [UnityEngine.Scripting.Preserve]
+        public void Update(float elapseSeconds, float realElapseSeconds)
         {
             m_TaskPool.Update(elapseSeconds, realElapseSeconds);
             m_DownloadCounter.Update(elapseSeconds, realElapseSeconds);
@@ -191,7 +202,8 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 关闭并清理下载管理器。
         /// </summary>
-        protected override void Shutdown()
+        [UnityEngine.Scripting.Preserve]
+        public void Shutdown()
         {
             m_TaskPool.Shutdown();
             m_DownloadCounter.Shutdown();
@@ -201,6 +213,7 @@ namespace GameFrameX.Download.Runtime
         /// 增加下载代理辅助器。
         /// </summary>
         /// <param name="downloadAgentHelper">要增加的下载代理辅助器。</param>
+        [UnityEngine.Scripting.Preserve]
         public void AddDownloadAgentHelper(IDownloadAgentHelper downloadAgentHelper)
         {
             DownloadAgent agent = new DownloadAgent(downloadAgentHelper);
@@ -217,6 +230,7 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         /// <param name="serialId">要获取信息的下载任务的序列编号。</param>
         /// <returns>下载任务的信息。</returns>
+        [UnityEngine.Scripting.Preserve]
         public TaskInfo GetDownloadInfo(int serialId)
         {
             return m_TaskPool.GetTaskInfo(serialId);
@@ -227,6 +241,7 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         /// <param name="tag">要获取信息的下载任务的标签。</param>
         /// <returns>下载任务的信息。</returns>
+        [UnityEngine.Scripting.Preserve]
         public TaskInfo[] GetDownloadInfos(string tag)
         {
             return m_TaskPool.GetTaskInfos(tag);
@@ -237,6 +252,7 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         /// <param name="tag">要获取信息的下载任务的标签。</param>
         /// <param name="results">下载任务的信息。</param>
+        [UnityEngine.Scripting.Preserve]
         public void GetDownloadInfos(string tag, List<TaskInfo> results)
         {
             m_TaskPool.GetTaskInfos(tag, results);
@@ -246,6 +262,7 @@ namespace GameFrameX.Download.Runtime
         /// 获取所有下载任务的信息。
         /// </summary>
         /// <returns>所有下载任务的信息。</returns>
+        [UnityEngine.Scripting.Preserve]
         public TaskInfo[] GetAllDownloadInfos()
         {
             return m_TaskPool.GetAllTaskInfos();
@@ -255,6 +272,7 @@ namespace GameFrameX.Download.Runtime
         /// 获取所有下载任务的信息。
         /// </summary>
         /// <param name="results">所有下载任务的信息。</param>
+        [UnityEngine.Scripting.Preserve]
         public void GetAllDownloadInfos(List<TaskInfo> results)
         {
             m_TaskPool.GetAllTaskInfos(results);
@@ -266,6 +284,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="downloadPath">下载后存放路径。</param>
         /// <param name="downloadUri">原始下载地址。</param>
         /// <returns>新增下载任务的序列编号。</returns>
+        [UnityEngine.Scripting.Preserve]
         public int AddDownload(string downloadPath, string downloadUri)
         {
             return AddDownload(downloadPath, downloadUri, null, Constant.DefaultPriority, null);
@@ -278,6 +297,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="downloadUri">原始下载地址。</param>
         /// <param name="tag">下载任务的标签。</param>
         /// <returns>新增下载任务的序列编号。</returns>
+        [UnityEngine.Scripting.Preserve]
         public int AddDownload(string downloadPath, string downloadUri, string tag)
         {
             return AddDownload(downloadPath, downloadUri, tag, Constant.DefaultPriority, null);
@@ -290,6 +310,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="downloadUri">原始下载地址。</param>
         /// <param name="priority">下载任务的优先级。</param>
         /// <returns>新增下载任务的序列编号。</returns>
+        [UnityEngine.Scripting.Preserve]
         public int AddDownload(string downloadPath, string downloadUri, int priority)
         {
             return AddDownload(downloadPath, downloadUri, null, priority, null);
@@ -302,6 +323,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="downloadUri">原始下载地址。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>新增下载任务的序列编号。</returns>
+        [UnityEngine.Scripting.Preserve]
         public int AddDownload(string downloadPath, string downloadUri, object userData)
         {
             return AddDownload(downloadPath, downloadUri, null, Constant.DefaultPriority, userData);
@@ -315,6 +337,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="tag">下载任务的标签。</param>
         /// <param name="priority">下载任务的优先级。</param>
         /// <returns>新增下载任务的序列编号。</returns>
+        [UnityEngine.Scripting.Preserve]
         public int AddDownload(string downloadPath, string downloadUri, string tag, int priority)
         {
             return AddDownload(downloadPath, downloadUri, tag, priority, null);
@@ -328,6 +351,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="tag">下载任务的标签。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>新增下载任务的序列编号。</returns>
+        [UnityEngine.Scripting.Preserve]
         public int AddDownload(string downloadPath, string downloadUri, string tag, object userData)
         {
             return AddDownload(downloadPath, downloadUri, tag, Constant.DefaultPriority, userData);
@@ -341,6 +365,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="priority">下载任务的优先级。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>新增下载任务的序列编号。</returns>
+        [UnityEngine.Scripting.Preserve]
         public int AddDownload(string downloadPath, string downloadUri, int priority, object userData)
         {
             return AddDownload(downloadPath, downloadUri, null, priority, userData);
@@ -355,6 +380,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="priority">下载任务的优先级。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>新增下载任务的序列编号。</returns>
+        [UnityEngine.Scripting.Preserve]
         public int AddDownload(string downloadPath, string downloadUri, string tag, int priority, object userData)
         {
             if (string.IsNullOrEmpty(downloadPath))
@@ -382,6 +408,7 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         /// <param name="serialId">要移除下载任务的序列编号。</param>
         /// <returns>是否移除下载任务成功。</returns>
+        [UnityEngine.Scripting.Preserve]
         public bool RemoveDownload(int serialId)
         {
             return m_TaskPool.RemoveTask(serialId);
@@ -392,6 +419,7 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         /// <param name="tag">要移除下载任务的标签。</param>
         /// <returns>移除下载任务的数量。</returns>
+        [UnityEngine.Scripting.Preserve]
         public int RemoveDownloads(string tag)
         {
             return m_TaskPool.RemoveTasks(tag);
@@ -401,6 +429,7 @@ namespace GameFrameX.Download.Runtime
         /// 移除所有下载任务。
         /// </summary>
         /// <returns>移除下载任务的数量。</returns>
+        [UnityEngine.Scripting.Preserve]
         public int RemoveAllDownloads()
         {
             return m_TaskPool.RemoveAllTasks();

@@ -1,7 +1,8 @@
 {
     "name": "GameFrameX.Download.Tests",
     "references": [
-        "GameFrameX.Download.Runtime"
+        "GameFrameX.Download.Runtime",
+        "GameFrameX.Runtime"
     ],
     "rootNamespace": "GameFrameX.Download.Tests",
     "includePlatforms": [

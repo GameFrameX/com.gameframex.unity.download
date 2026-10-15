@@ -42,6 +42,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 初始化下载代理辅助器错误事件的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public DownloadAgentHelperErrorEventArgs()
         {
             DeleteDownloading = false;
@@ -51,11 +52,13 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取是否需要删除正在下载的文件。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public bool DeleteDownloading { get; private set; }
 
         /// <summary>
         /// 获取错误信息。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public string ErrorMessage { get; private set; }
 
         /// <summary>
@@ -64,6 +67,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="deleteDownloading">是否需要删除正在下载的文件。</param>
         /// <param name="errorMessage">错误信息。</param>
         /// <returns>创建的下载代理辅助器错误事件。</returns>
+        [UnityEngine.Scripting.Preserve]
         public static DownloadAgentHelperErrorEventArgs Create(bool deleteDownloading, string errorMessage)
         {
             DownloadAgentHelperErrorEventArgs downloadAgentHelperErrorEventArgs = ReferencePool.Acquire<DownloadAgentHelperErrorEventArgs>();

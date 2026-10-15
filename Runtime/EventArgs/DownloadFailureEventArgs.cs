@@ -42,6 +42,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 初始化下载失败事件的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public DownloadFailureEventArgs()
         {
             SerialId = 0;
@@ -54,26 +55,31 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取下载任务的序列编号。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int SerialId { get; private set; }
 
         /// <summary>
         /// 获取下载后存放路径。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public string DownloadPath { get; private set; }
 
         /// <summary>
         /// 获取下载地址。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public string DownloadUri { get; private set; }
 
         /// <summary>
         /// 获取错误信息。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public string ErrorMessage { get; private set; }
 
         /// <summary>
         /// 获取用户自定义数据。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public object UserData { get; private set; }
 
         /// <summary>
@@ -85,6 +91,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="errorMessage">错误信息。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>创建的下载失败事件。</returns>
+        [UnityEngine.Scripting.Preserve]
         public static DownloadFailureEventArgs Create(int serialId, string downloadPath, string downloadUri, string errorMessage, object userData)
         {
             DownloadFailureEventArgs downloadFailureEventArgs = ReferencePool.Acquire<DownloadFailureEventArgs>();

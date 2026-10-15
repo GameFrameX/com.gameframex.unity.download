@@ -42,6 +42,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 初始化下载代理辅助器完成事件的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public DownloadAgentHelperCompleteEventArgs()
         {
             Length = 0L;
@@ -50,6 +51,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取下载的数据大小。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public long Length { get; private set; }
 
         /// <summary>
@@ -57,6 +59,7 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         /// <param name="length">下载的数据大小。</param>
         /// <returns>创建的下载代理辅助器完成事件。</returns>
+        [UnityEngine.Scripting.Preserve]
         public static DownloadAgentHelperCompleteEventArgs Create(long length)
         {
             if (length < 0L)

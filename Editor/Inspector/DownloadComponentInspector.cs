@@ -28,6 +28,7 @@
 //  ==========================================================================================
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GameFrameX.Download.Runtime;
@@ -42,11 +43,15 @@ namespace GameFrameX.Download.Editor
     internal sealed class DownloadComponentInspector : ComponentTypeComponentInspector
     {
         private SerializedProperty m_InstanceRoot = null;
-        private SerializedProperty m_DownloadAgentHelperCount = null;
-        private SerializedProperty m_Timeout = null;
-        private SerializedProperty m_FlushSize = null;
+        private SerializedProperty m_CustomDownloadAgentHelper = null;
 
-        private HelperInfo<DownloadAgentHelperBase> m_DownloadAgentHelperInfo = new HelperInfo<DownloadAgentHelperBase>("DownloadAgent");
+        /// <summary>
+        /// Options 成员名 → 组件持有字段名别名（DownloadOptions.AgentHelperCount 由 m_DownloadAgentHelperCount 持有）。
+        /// </summary>
+        private static readonly Dictionary<string, string> MemberFieldAliases = new Dictionary<string, string>
+        {
+            { "AgentHelperCount", "m_DownloadAgentHelperCount" },
+        };
 
         public override void OnInspectorGUI()
         {
@@ -59,37 +64,13 @@ namespace GameFrameX.Download.Editor
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
                 EditorGUILayout.PropertyField(m_InstanceRoot);
-                m_DownloadAgentHelperInfo.Draw();
-                m_DownloadAgentHelperCount.intValue = EditorGUILayout.IntSlider("Download Agent Helper Count", m_DownloadAgentHelperCount.intValue, 1, 16);
+                EditorGUILayout.PropertyField(m_CustomDownloadAgentHelper);
             }
             EditorGUI.EndDisabledGroup();
 
-            float timeout = EditorGUILayout.Slider("Timeout", m_Timeout.floatValue, 0f, 120f);
-            if (timeout != m_Timeout.floatValue)
-            {
-                if (EditorApplication.isPlaying)
-                {
-                    t.Timeout = timeout;
-                }
-                else
-                {
-                    m_Timeout.floatValue = timeout;
-                }
-            }
-
-            int flushSize = EditorGUILayout.DelayedIntField("Flush Size", m_FlushSize.intValue);
-            if (flushSize != m_FlushSize.intValue)
-            {
-                if (EditorApplication.isPlaying)
-                {
-                    t.FlushSize = flushSize;
-                }
-                else
-                {
-                    m_FlushSize.intValue = flushSize;
-                }
-            }
-
+            // C9 活视图：编辑态提示 DownloadOptions 入口；Play 态 Timeout 实时可改（经 DownloadComponent.Timeout 属性），
+            // AgentHelperCount/FlushSize/DownloadAgentHelperFactory 为启动期型只读（AgentHelperCount 持有字段名经别名映射）。
+            GameFrameXOptionsLiveViewUtility.DrawLiveView(t, typeof(DownloadOptions), MemberFieldAliases);
             if (EditorApplication.isPlaying && IsPrefabInHierarchy(t.gameObject))
             {
                 EditorGUILayout.LabelField("Paused", t.Paused.ToString());
@@ -157,12 +138,8 @@ namespace GameFrameX.Download.Editor
         {
             base.Enable();
             m_InstanceRoot = serializedObject.FindProperty("m_InstanceRoot");
-            m_DownloadAgentHelperCount = serializedObject.FindProperty("m_DownloadAgentHelperCount");
-            m_Timeout = serializedObject.FindProperty("m_Timeout");
-            m_FlushSize = serializedObject.FindProperty("m_FlushSize");
 
-            m_DownloadAgentHelperInfo.Init(serializedObject);
-            m_DownloadAgentHelperInfo.Refresh();
+            m_CustomDownloadAgentHelper = serializedObject.FindProperty("m_CustomDownloadAgentHelper");
             serializedObject.ApplyModifiedProperties();
         }
 

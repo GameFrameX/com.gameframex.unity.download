@@ -186,6 +186,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 释放资源。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public void Dispose()
         {
             Dispose(true);

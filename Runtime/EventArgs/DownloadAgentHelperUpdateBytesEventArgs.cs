@@ -44,6 +44,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 初始化下载代理辅助器更新数据流事件的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public DownloadAgentHelperUpdateBytesEventArgs()
         {
             m_Bytes = null;
@@ -54,6 +55,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取数据流的偏移。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int Offset
         {
             get;
@@ -63,6 +65,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取数据流的长度。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int Length
         {
             get;
@@ -76,6 +79,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="offset">数据流的偏移。</param>
         /// <param name="length">数据流的长度。</param>
         /// <returns>创建的下载代理辅助器更新数据流事件。</returns>
+        [UnityEngine.Scripting.Preserve]
         public static DownloadAgentHelperUpdateBytesEventArgs Create(byte[] bytes, int offset, int length)
         {
             if (bytes == null)
@@ -113,6 +117,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取下载的数据流。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public byte[] GetBytes()
         {
             return m_Bytes;

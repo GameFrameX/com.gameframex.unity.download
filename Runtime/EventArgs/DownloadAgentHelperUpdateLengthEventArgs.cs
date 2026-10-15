@@ -42,6 +42,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 初始化下载代理辅助器更新数据大小事件的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public DownloadAgentHelperUpdateLengthEventArgs()
         {
             DeltaLength = 0;
@@ -50,6 +51,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取下载的增量数据大小。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int DeltaLength { get; private set; }
 
         /// <summary>
@@ -57,6 +59,7 @@ namespace GameFrameX.Download.Runtime
         /// </summary>
         /// <param name="deltaLength">下载的增量数据大小。</param>
         /// <returns>创建的下载代理辅助器更新数据大小事件。</returns>
+        [UnityEngine.Scripting.Preserve]
         public static DownloadAgentHelperUpdateLengthEventArgs Create(int deltaLength)
         {
             if (deltaLength <= 0)

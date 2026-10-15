@@ -43,6 +43,7 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 初始化下载成功事件的新实例。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public DownloadSuccessEventArgs()
         {
             SerialId = 0;
@@ -55,26 +56,31 @@ namespace GameFrameX.Download.Runtime
         /// <summary>
         /// 获取下载任务的序列编号。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public int SerialId { get; private set; }
 
         /// <summary>
         /// 获取下载后存放路径。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public string DownloadPath { get; private set; }
 
         /// <summary>
         /// 获取下载地址。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public string DownloadUri { get; private set; }
 
         /// <summary>
         /// 获取当前大小。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public long CurrentLength { get; private set; }
 
         /// <summary>
         /// 获取用户自定义数据。
         /// </summary>
+        [UnityEngine.Scripting.Preserve]
         public object UserData { get; private set; }
 
         /// <summary>
@@ -86,6 +92,7 @@ namespace GameFrameX.Download.Runtime
         /// <param name="currentLength">当前大小。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>创建的下载成功事件。</returns>
+        [UnityEngine.Scripting.Preserve]
         public static DownloadSuccessEventArgs Create(int serialId, string downloadPath, string downloadUri, long currentLength, object userData)
         {
             DownloadSuccessEventArgs downloadSuccessEventArgs = ReferencePool.Acquire<DownloadSuccessEventArgs>();
