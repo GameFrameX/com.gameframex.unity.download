@@ -1,3 +1,13 @@
+# [2.0.0](https://github.com/gameframex/com.gameframex.unity.download/compare/1.2.1...2.0.0) (2026-10-15)
+
+
+* feat(module)!: 下载模块薄入口化并新增 DownloadOptions ([b44e5e5](https://github.com/gameframex/com.gameframex.unity.download/commit/b44e5e55ca3fc7d88da97095626d832cd13c8feb))
+
+
+### BREAKING CHANGES
+
+* DownloadComponent 序列化字段移除，编辑期配置入口收敛到代码 DownloadOptions；Helper 选择方式变更。
+
 ## [Unreleased]
 
 ### ⚠ BREAKING CHANGES
